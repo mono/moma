@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoMA", "MoMA.csproj", "{D7FF97F5-1029-4886-9C9D-4EE5618836BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoMA.Analyzer", "MoMA.Analyzer\MoMA.Analyzer.csproj", "{CC12F142-C92F-4AD0-AEA3-D94F661C557B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoMAExtractor", "MoMAExtractor\MoMAExtractor.csproj", "{64DE84A1-C274-4875-84F2-FCA7B24104D8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D7FF97F5-1029-4886-9C9D-4EE5618836BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7FF97F5-1029-4886-9C9D-4EE5618836BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7FF97F5-1029-4886-9C9D-4EE5618836BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7FF97F5-1029-4886-9C9D-4EE5618836BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC12F142-C92F-4AD0-AEA3-D94F661C557B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC12F142-C92F-4AD0-AEA3-D94F661C557B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC12F142-C92F-4AD0-AEA3-D94F661C557B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC12F142-C92F-4AD0-AEA3-D94F661C557B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64DE84A1-C274-4875-84F2-FCA7B24104D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64DE84A1-C274-4875-84F2-FCA7B24104D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64DE84A1-C274-4875-84F2-FCA7B24104D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64DE84A1-C274-4875-84F2-FCA7B24104D8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
