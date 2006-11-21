@@ -1,0 +1,23 @@
+- If you scan something, go back, and scan again, MoMA will reload
+  all the definition files.  This could/should be eliminated.
+
+- Miguel suggested being able to scan your assembly against a live
+  Mono install, to see how well your app would run against, say,
+  SLED 10.
+
+- The definition files should be packed into a zip file, with a data
+  file that tells its creation date and the mono version it scans
+  against, like "Mono 1.2" or "Mono SVN Head: 10/15/2006".
+
+- Once definition files are in zipped bundles, allow the user to have
+  multiple ones installed, and provide a combobox to allow them to
+  choose which one to scan against.
+
+- Sebastien suggested using the size of the method body to determine
+  if a NotImplementedException is the only thing in the method, or if
+  it only throws occasionally.  Something to consider if we get reports
+  of too many NIE false positives.
+
+- The submission web services is dead simple.  It drops the results 
+  unchanged into a directory.  We either need a backend process to make
+  these usable, or to do more work in the web service.
