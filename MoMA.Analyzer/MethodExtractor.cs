@@ -41,6 +41,31 @@ namespace MoMA.Analyzer
 										if (i.Previous.Operand != null && i.Previous.Operand.ToString ().StartsWith ("System.Void System.NotImplementedException"))
 											throwsNotImplementedMethods[method.ToString ()] = new Method (method.ToString ());
 					}
+
+					//Gets all constructors of the current type
+					foreach (MethodDefinition method in type.Constructors) {
+						// We only want Public and Protected methods
+						if ((method.Attributes & MethodAttributes.Family) == 0 && (method.Attributes & MethodAttributes.Public) == 0)
+							continue;
+
+						// If adding all methods, add this method
+						if (allMethods != null)
+							allMethods[method.ToString ()] = new Method (method.ToString ());
+
+						// If adding MonoTODO methods, check this method
+						if (monoTodoMethods != null)
+							foreach (CustomAttribute ca in method.CustomAttributes)
+								if (ca.Constructor.DeclaringType.ToString () == "System.MonoTODOAttribute")
+									monoTodoMethods[method.ToString ()] = new Method (method.ToString (), ca.ConstructorParameters.Count > 0 ? ca.ConstructorParameters[0].ToString () : string.Empty);
+
+						// If adding methods that throw NotImplementedException, look for those
+						if (throwsNotImplementedMethods != null && method.Body != null)
+							foreach (Instruction i in method.Body.Instructions)
+								if (i.OpCode == OpCodes.Throw)
+									if (i.Previous.Operand != null && i.Previous.Operand.ToString ().StartsWith ("System.Void System.NotImplementedException"))
+										throwsNotImplementedMethods[method.ToString ()] = new Method (method.ToString ());
+					}
+
 				}
 			}
 		}

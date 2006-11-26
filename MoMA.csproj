@@ -29,6 +29,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Web" />
@@ -95,10 +96,10 @@
     <WebReferences Include="Web References\" />
   </ItemGroup>
   <ItemGroup>
-    <WebReferenceUrl Include="http://jpobst.com/moma/MoMASubmit.asmx">
+    <WebReferenceUrl Include="http://www.go-mono.com/moma/MoMASubmit.asmx">
       <UrlBehavior>Static</UrlBehavior>
       <RelPath>Web References\MoMAWebServices\</RelPath>
-      <UpdateFromURL>http://jpobst.com/moma/MoMASubmit.asmx</UpdateFromURL>
+      <UpdateFromURL>http://www.go-mono.com/moma/MoMASubmit.asmx</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>

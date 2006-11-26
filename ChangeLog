@@ -1,0 +1,12 @@
+11-26-2006  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Extract missing constructors.  This will allow missing types
+	  to show up as missing ctor's.
+	* Scan user's code in constructors.
+	* Added scanning the following opcodes: calli, ldftn, ldvirtftn, newobj.
+	* Updated web reference to http://www.go-mono.com/moma/MoMASubmit.asmx.
+	* Remove invalid assemblies from the assembly list.
+
+11-22-2006  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Initial import.

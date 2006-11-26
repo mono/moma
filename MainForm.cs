@@ -100,6 +100,7 @@ namespace MoMA
 					SetupForm (WizardStep.ChooseAssemblies);
 					break;
 				case WizardStep.ChooseAssemblies:
+					VerifyValidAssemblies ();
 					if (AssemblyListView.Items.Count == 0)
 					{
 						MessageBox.Show ("Please choose at least one assembly to analyze.");
@@ -188,6 +189,9 @@ namespace MoMA
 				aa.ScanAssemblyForPInvokes ((string)lvi.Tag);
 				
 			// Start the results reports
+			if (!Directory.Exists (Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Reports")))
+				Directory.CreateDirectory (Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Reports"));
+			
 			string output_path = Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Reports");		
 			XhtmlTextWriter report = aa.BeginHtmlReport (new FileStream (Path.Combine (output_path, "output.html"), FileMode.Create));
 			StreamWriter submit_report = aa.BeginTextReport (new FileStream (Path.Combine (output_path, "submit.txt"), FileMode.Create));
@@ -302,6 +306,26 @@ namespace MoMA
 				MessageBox.Show ("Results successfully submitted.  Thanks!");
 			else
 				MessageBox.Show ("Result submission failed.  Please try again later.");
+		}
+		
+		private void VerifyValidAssemblies ()
+		{
+			List<ListViewItem> invalid_assemblies = new List<ListViewItem> ();
+
+			foreach (ListViewItem lvi in AssemblyListView.Items)
+				if (!AssemblyAnalyzer.IsValidAssembly ((string)lvi.Tag))
+					invalid_assemblies.Add (lvi);
+
+			string msg = "The following are not valid .Net assemblies and will not be scanned:\n";
+
+			foreach (ListViewItem lvi in invalid_assemblies)
+			{
+				msg += string.Format ("{0}\n", lvi.Text);
+				AssemblyListView.Items.Remove (lvi);
+			}
+			
+			if (invalid_assemblies.Count > 0)
+				MessageBox.Show (msg);
 		}
 	}
 }

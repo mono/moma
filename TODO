@@ -20,4 +20,7 @@
 
 - The submission web services is dead simple.  It drops the results 
   unchanged into a directory.  We either need a backend process to make
-  these usable, or to do more work in the web service.
+  these usable, or to do more work in the web service.  A list files and
+  retrieve files would be handy.
+
+- We do not currently handle MonoTODO's list on types, only methods.

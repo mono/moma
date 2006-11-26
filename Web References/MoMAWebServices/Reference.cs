@@ -35,7 +35,7 @@ namespace MoMA.MoMAWebServices {
         
         /// <remarks/>
         public MoMASubmit() {
-            this.Url = "http://jpobst.com/pobst/moma/MoMASubmit.asmx";
+            this.Url = "http://www.go-mono.com/moma/MoMASubmit.asmx";
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
                 this.useDefaultCredentialsSetExplicitly = false;

@@ -1,65 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
-<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://mono-project.com/MoMASubmit/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" targetNamespace="http://mono-project.com/MoMASubmit/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
-  <wsdl:types>
-    <s:schema elementFormDefault="qualified" targetNamespace="http://mono-project.com/MoMASubmit/">
-      <s:element name="SubmitResults">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="results" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="SubmitResultsResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="1" maxOccurs="1" name="SubmitResultsResult" type="s:boolean" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
+<definitions xmlns:s0="http://mono-project.com/MoMASubmit/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" name="MoMASubmit" targetNamespace="http://mono-project.com/MoMASubmit/" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <s:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://mono-project.com/MoMASubmit/">
+      <xs:element name="SubmitResults">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="results" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="SubmitResultsResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="SubmitResultsResult" type="xs:boolean" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="boolean" type="xs:boolean" />
     </s:schema>
-  </wsdl:types>
-  <wsdl:message name="SubmitResultsSoapIn">
-    <wsdl:part name="parameters" element="tns:SubmitResults" />
-  </wsdl:message>
-  <wsdl:message name="SubmitResultsSoapOut">
-    <wsdl:part name="parameters" element="tns:SubmitResultsResponse" />
-  </wsdl:message>
-  <wsdl:portType name="MoMASubmitSoap">
-    <wsdl:operation name="SubmitResults">
-      <wsdl:input message="tns:SubmitResultsSoapIn" />
-      <wsdl:output message="tns:SubmitResultsSoapOut" />
-    </wsdl:operation>
-  </wsdl:portType>
-  <wsdl:binding name="MoMASubmitSoap" type="tns:MoMASubmitSoap">
+  </types>
+  <message name="SubmitResultsSoapIn">
+    <part name="parameters" element="s0:SubmitResults" />
+  </message>
+  <message name="SubmitResultsSoapOut">
+    <part name="parameters" element="s0:SubmitResultsResponse" />
+  </message>
+  <message name="SubmitResultsHttpGetIn">
+    <part name="results" type="s:string" />
+  </message>
+  <message name="SubmitResultsHttpGetOut">
+    <part name="Body" element="s0:boolean" />
+  </message>
+  <message name="SubmitResultsHttpPostIn">
+    <part name="results" type="s:string" />
+  </message>
+  <message name="SubmitResultsHttpPostOut">
+    <part name="Body" element="s0:boolean" />
+  </message>
+  <portType name="MoMASubmitSoap">
+    <operation name="SubmitResults">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+      </wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+      </wsdl:documentation>
+      <input message="s0:SubmitResultsSoapIn" />
+      <output message="s0:SubmitResultsSoapOut" />
+    </operation>
+  </portType>
+  <portType name="MoMASubmitHttpGet">
+    <operation name="SubmitResults">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+      </wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+      </wsdl:documentation>
+      <input message="s0:SubmitResultsHttpGetIn" />
+      <output message="s0:SubmitResultsHttpGetOut" />
+    </operation>
+  </portType>
+  <portType name="MoMASubmitHttpPost">
+    <operation name="SubmitResults">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+      </wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+      </wsdl:documentation>
+      <input message="s0:SubmitResultsHttpPostIn" />
+      <output message="s0:SubmitResultsHttpPostOut" />
+    </operation>
+  </portType>
+  <binding name="MoMASubmitSoap" type="s0:MoMASubmitSoap">
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
-    <wsdl:operation name="SubmitResults">
+    <operation name="SubmitResults">
       <soap:operation soapAction="http://mono-project.com/MoMASubmit/SubmitResults" style="document" />
-      <wsdl:input>
+      <input>
         <soap:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
+      </input>
+      <output>
         <soap:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-  </wsdl:binding>
-  <wsdl:binding name="MoMASubmitSoap12" type="tns:MoMASubmitSoap">
-    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
-    <wsdl:operation name="SubmitResults">
-      <soap12:operation soapAction="http://mono-project.com/MoMASubmit/SubmitResults" style="document" />
-      <wsdl:input>
-        <soap12:body use="literal" />
-      </wsdl:input>
-      <wsdl:output>
-        <soap12:body use="literal" />
-      </wsdl:output>
-    </wsdl:operation>
-  </wsdl:binding>
-  <wsdl:service name="MoMASubmit">
-    <wsdl:port name="MoMASubmitSoap" binding="tns:MoMASubmitSoap">
-      <soap:address location="http://jpobst.com/pobst/moma/MoMASubmit.asmx" />
-    </wsdl:port>
-    <wsdl:port name="MoMASubmitSoap12" binding="tns:MoMASubmitSoap12">
-      <soap12:address location="http://jpobst.com/pobst/moma/MoMASubmit.asmx" />
-    </wsdl:port>
-  </wsdl:service>
-</wsdl:definitions>
+      </output>
+    </operation>
+  </binding>
+  <binding name="MoMASubmitHttpGet" type="s0:MoMASubmitHttpGet">
+    <http:binding verb="GET" />
+    <operation name="SubmitResults">
+      <http:operation location="/SubmitResults" />
+      <input>
+        <http:urlEncoded />
+      </input>
+      <output>
+        <mime:mimeXml part="Body" />
+      </output>
+    </operation>
+  </binding>
+  <binding name="MoMASubmitHttpPost" type="s0:MoMASubmitHttpPost">
+    <http:binding verb="POST" />
+    <operation name="SubmitResults">
+      <http:operation location="/SubmitResults" />
+      <input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </input>
+      <output>
+        <mime:mimeXml part="Body" />
+      </output>
+    </operation>
+  </binding>
+  <service name="MoMASubmit">
+    <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    </wsdl:documentation>
+    <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+    </wsdl:documentation>
+    <port name="MoMASubmitSoap" binding="s0:MoMASubmitSoap">
+      <soap:address location="http://www.go-mono.com/moma/MoMASubmit.asmx" />
+    </port>
+    <port name="MoMASubmitHttpGet" binding="s0:MoMASubmitHttpGet">
+      <http:address location="http://www.go-mono.com/moma/MoMASubmit.asmx" />
+    </port>
+    <port name="MoMASubmitHttpPost" binding="s0:MoMASubmitHttpPost">
+      <http:address location="http://www.go-mono.com/moma/MoMASubmit.asmx" />
+    </port>
+  </service>
+</definitions>

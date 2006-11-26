@@ -87,10 +87,34 @@ namespace MoMA.Analyzer
 
 			foreach (TypeDefinition type in ad.MainModule.Types) {
 				if (type.Name != "<Module>") {
+					// Check every method for calls that match our issues lists
 					foreach (MethodDefinition method in type.Methods) {
 						if (method.Body != null) {
 							foreach (Instruction i in method.Body.Instructions) {
-								if (i.OpCode == OpCodes.Call || i.OpCode == OpCodes.Callvirt) {
+								if (i.OpCode == OpCodes.Call || i.OpCode == OpCodes.Callvirt || i.OpCode == OpCodes.Calli || i.OpCode == OpCodes.Ldftn || i.OpCode == OpCodes.Ldvirtftn || i.OpCode == OpCodes.Newobj) {
+									Method match;
+
+									if (mono_todo != null && mono_todo.Matches (i.Operand.ToString (), out match))
+										mono_todo_results.Add (new MonoTodoError (new Method (method.ToString ()), match));
+
+									if (not_implemented != null && not_implemented.Matches (i.Operand.ToString (), out match))
+										not_implemented_results.Add (new NotImplementedExceptionError (new Method (method.ToString ()), match));
+
+									if (pinvoke.Matches (i.Operand.ToString (), out match))
+										pinvoke_results.Add (new PInvokeError (new Method (method.ToString ()), match));
+
+									if (missing.Matches (i.Operand.ToString (), out match))
+										missing_results.Add (new MissingMethodError (new Method (method.ToString ()), match));
+								}
+							}
+						}
+					}
+
+					// Check every constructor for calls that match our issues lists
+					foreach (MethodDefinition method in type.Constructors) {
+						if (method.Body != null) {
+							foreach (Instruction i in method.Body.Instructions) {
+								if (i.OpCode == OpCodes.Call || i.OpCode == OpCodes.Callvirt || i.OpCode == OpCodes.Calli || i.OpCode == OpCodes.Ldftn || i.OpCode == OpCodes.Ldvirtftn || i.OpCode == OpCodes.Newobj) {
 									Method match;
 
 									if (mono_todo != null && mono_todo.Matches (i.Operand.ToString (), out match))
@@ -273,6 +297,17 @@ namespace MoMA.Analyzer
 			writer.WriteLine ("h3 { margin-bottom: .45em; font-size: 1.25em; }");
 
 			writer.WriteEndTag ("style");
+		}
+		
+		public static bool IsValidAssembly (string assembly)
+		{
+			try {
+				AssemblyFactory.GetAssembly (assembly);
+				return true;
+			}
+			catch (Mono.Cecil.Binary.ImageFormatException ex) {
+				return false;
+			}
 		}
 	}
 }
