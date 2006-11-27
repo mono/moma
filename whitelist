@@ -1,5 +1,3 @@
-System.Net.WebResponse System.Net.WebRequest::GetResponse()
-System.String System.Net.WebRequest::get_ConnectionGroupName()
 System.Int64 System.Net.WebRequest::get_ContentLength()
 System.String System.Net.WebRequest::get_ContentType()
 System.Net.ICredentials System.Net.WebRequest::get_Credentials()
