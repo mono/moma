@@ -15,14 +15,7 @@ namespace MoMA.Analyzer
 		
 		public void FindPInvokesInAssembly (string assembly)
 		{
-			AssemblyDefinition ad;
-
-			try {
-				ad = AssemblyFactory.GetAssembly (assembly);
-			} catch (ImageFormatException ife){
-				
-				return;
-			}
+			AssemblyDefinition ad = AssemblyFactory.GetAssembly (assembly);
 
 			//Gets all types of the MainModule of the assembly
 			foreach (TypeDefinition type in ad.MainModule.Types) {
