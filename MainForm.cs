@@ -294,12 +294,11 @@ namespace MoMA
 		private void SubmitReportButton_Click (object sender, EventArgs e)
 		{
 			SubmitReportButton.Enabled = false;
-            string output_path = Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Reports");
-            string file = Path.Combine (output_path, "submit.txt");
-
-            OptionalInformation optional = new OptionalInformation (file);
-            optional.ShowDialog ();
-            Close ();
+			string output_path = Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Reports");
+			string file = Path.Combine (output_path, "submit.txt");
+			
+			OptionalInformation optional = new OptionalInformation (file);
+			optional.ShowDialog ();
 		}
 		
 		private void VerifyValidAssemblies ()
