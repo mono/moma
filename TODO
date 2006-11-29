@@ -24,3 +24,16 @@
   retrieve files would be handy.
 
 - We do not currently handle MonoTODO's list on types, only methods.
+
+- Add the Mono version we scanned against to the submission report.
+
+- Optional comment box for submitted results.
+
+- Don't let them add same assembly twice to scan list.
+
+- Add initobj to calls.
+
+- Remove jpobst.com from app.config.
+
+- Look at ComImportAttribute on classes.  COM Interop is obviously a valid
+  "issue".
