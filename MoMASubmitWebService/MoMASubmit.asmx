@@ -36,5 +36,22 @@ public class MoMASubmit  : System.Web.Services.WebService {
         }
     }
     
+    [WebMethod]
+    public string GetLatestDefinitionsVersion ()
+    {
+        // YOU MUST UPDATE THE FOLLOWING 3 STRINGS FOR EACH NEW DEFINITION PACK!!!
+        // Note: None of the strings may contain the pipe character "|"
+        
+        // Opaque user visible string denoting the version on Mono these defs are for, ex: "Mono 1.2.2"
+        // MUST match the first line in the version.txt file of the def .zip
+        string latest_version = "Mono 1.2.2";
+        // Date the defs were built, used to sort the defs chronologically for the user, ex: "12/01/06"
+        // MUST match the second line in the version.txt file of the def .zip
+        string version_date = "12/01/06";
+        // http path to download defs from, ex: "http://www.go-mono.com/archive/moma/defs/1.2.2-defs.zip"
+        string file_path = "http://www.go-mono.com/archive/moma/defs/1.2.2-defs.zip";
+        
+        return string.Format ("{0}|{1}|{2}", latest_version, version_date, file_path);
+    }
 }
 
