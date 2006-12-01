@@ -7,7 +7,6 @@ using System.Web.Services.Protocols;
 using System.IO;
 
 [WebService(Namespace = "http://mono-project.com/MoMASubmit/")]
-[WebServiceBinding(ConformsTo = WsiProfiles.BasicProfile1_1)]
 public class MoMASubmit  : System.Web.Services.WebService {
 
     [WebMethod]
