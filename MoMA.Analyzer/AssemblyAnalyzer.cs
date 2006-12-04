@@ -48,6 +48,21 @@ namespace MoMA.Analyzer
 			pinvoke_results = new List<BaseError> ();
 		}
 
+		public void LoadDefinitions (string definitionBundlePath)
+		{
+			Stream mt;
+			Stream ni;
+			Stream mi;
+
+			DefinitionHandler.GetDefinitionStreamsFromBundle (definitionBundlePath, out mt, out ni, out mi);
+
+			LoadDefinitions (mt, ni, mi);
+
+			mt.Close ();
+			ni.Close ();
+			mi.Close ();	
+		}
+		
 		public void LoadDefinitions (string monoTodoDefinitions, string notImplementedDefinitions, string missingDefinitions)
 		{
 			Stream mt = new FileStream (monoTodoDefinitions, FileMode.Open);
@@ -91,7 +106,7 @@ namespace MoMA.Analyzer
 					foreach (MethodDefinition method in type.Methods) {
 						if (method.Body != null) {
 							foreach (Instruction i in method.Body.Instructions) {
-								if (i.OpCode == OpCodes.Call || i.OpCode == OpCodes.Callvirt || i.OpCode == OpCodes.Calli || i.OpCode == OpCodes.Ldftn || i.OpCode == OpCodes.Ldvirtftn || i.OpCode == OpCodes.Newobj) {
+								if (i.OpCode == OpCodes.Call || i.OpCode == OpCodes.Callvirt || i.OpCode == OpCodes.Calli || i.OpCode == OpCodes.Ldftn || i.OpCode == OpCodes.Ldvirtftn || i.OpCode == OpCodes.Newobj || i.OpCode == OpCodes.Initobj) {
 									Method match;
 
 									if (mono_todo != null && mono_todo.Matches (i.Operand.ToString (), out match))
@@ -114,7 +129,7 @@ namespace MoMA.Analyzer
 					foreach (MethodDefinition method in type.Constructors) {
 						if (method.Body != null) {
 							foreach (Instruction i in method.Body.Instructions) {
-								if (i.OpCode == OpCodes.Call || i.OpCode == OpCodes.Callvirt || i.OpCode == OpCodes.Calli || i.OpCode == OpCodes.Ldftn || i.OpCode == OpCodes.Ldvirtftn || i.OpCode == OpCodes.Newobj) {
+								if (i.OpCode == OpCodes.Call || i.OpCode == OpCodes.Callvirt || i.OpCode == OpCodes.Calli || i.OpCode == OpCodes.Ldftn || i.OpCode == OpCodes.Ldvirtftn || i.OpCode == OpCodes.Newobj || i.OpCode == OpCodes.Initobj) {
 									Method match;
 
 									if (mono_todo != null && mono_todo.Matches (i.Operand.ToString (), out match))
@@ -193,10 +208,10 @@ namespace MoMA.Analyzer
 
 		public void AddResultsToTextReport (StreamWriter writer)
 		{
-			OutputTextResults (writer, "Methods missing from Mono", missing_results);
-			OutputTextResults (writer, "P/Invokes into native code", pinvoke_results);
-			OutputTextResults (writer, "Methods called that throw NotImplementedException", not_implemented_results);
-			OutputTextResults (writer, "Methods called marked with [MonoTodo]", mono_todo_results);
+			OutputTextResults (writer, "[MISS]", missing_results);
+			OutputTextResults (writer, "[PINV]", pinvoke_results);
+			OutputTextResults (writer, "[NIEX]", not_implemented_results);
+			OutputTextResults (writer, "[TODO]", mono_todo_results);
 		}
 
 		private void OutputHtmlResults (XhtmlTextWriter writer, string heading, List<BaseError> results, params string[] tableHeaders)
@@ -258,10 +273,10 @@ namespace MoMA.Analyzer
 			if (results.Count == 0)
 				return;
 
-			writer.WriteLine ("[{0}]", heading);
-
-			foreach (BaseError be in results)
+			foreach (BaseError be in results) {
+				writer.Write ("{0} ", heading);
 				be.WriteText (writer);
+			}
 		}
 
 		public void FinishHtmlReport (XhtmlTextWriter writer)
@@ -305,9 +320,33 @@ namespace MoMA.Analyzer
 				AssemblyFactory.GetAssembly (assembly);
 				return true;
 			}
-			catch (Mono.Cecil.Binary.ImageFormatException ex) {
+			catch (Mono.Cecil.Binary.ImageFormatException) {
 				return false;
 			}
+		}
+		
+		// results and version are required, the rest is optional
+		// returns true if the results were successfully submitted, false if they weren't
+		// however you must catch Exceptions for things like network failure, etc.
+		public static bool SubmitResults (string results, string version, string name, string email, string organization, string homepage, string comments)
+		{
+			if (string.IsNullOrEmpty(results) || string.IsNullOrEmpty(version))
+				throw new ArgumentException ("You must fill in results and version");
+				
+			MoMAWebService.MoMASubmit ws = new MoMAWebService.MoMASubmit ();
+
+			string extra = String.Format (
+			    "@Definitions: {0}\n" +
+			    "@Name: {1}\n" +
+			    "@Email: {2}\n" +
+			    "@Organization: {3}\n" +
+			    "@HomePage: {4}\n" +
+			    "@Comments: {5}\n{6}", version,
+			    name, email, organization, homepage,
+			    comments.Replace ('\n', ' ').Replace ('\r', ' '),
+			    results);
+		
+			return ws.SubmitResults (extra);
 		}
 	}
 }

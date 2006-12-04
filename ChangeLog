@@ -1,3 +1,16 @@
+12-03-2006  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Pack all definition files into one zip file, unzip on the fly.
+	* Only load definition files once per application run.
+	* User initiated update and download of definition files.
+	* Add definition version used to scan to submission report.
+	* Allow user to enter optional info and comments to submission report.
+	* Don't let user add same assembly twice to scan list.
+	* Allow multiple select of scan list for easier removal.
+	* Add initobj to list of scanned opcodes.
+	* Remove app.config.
+	* Move web service interaction to Moma.Analyzer.dll.
+
 11-26-2006  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Extract missing constructors.  This will allow missing types

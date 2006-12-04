@@ -14,6 +14,8 @@ namespace MoMA
 	public partial class MainForm : Form
 	{
 		private WizardStep current_step;
+		private string loaded_definitions;
+		private AssemblyAnalyzer aa;
 
 		public MainForm ()
 		{
@@ -21,6 +23,8 @@ namespace MoMA
 
 			ResetForm ();
 			SetupForm (WizardStep.Introduction);
+			SetupMonoVersion ();
+			aa = new AssemblyAnalyzer ();
 		}
 
 		private void ResetForm ()
@@ -32,6 +36,9 @@ namespace MoMA
 			AssemblyRemoveButton.Visible = false;
 			AssemblyLabel.Visible = false;
 			AssemblyInstructions.Visible = false;
+			CheckUpdateLink.Visible = false;
+			MonoVersionCombo.Visible = false;
+			MonoVersionLabel.Visible = false;
 
 			AnalysisResultsLabel.Visible = false;
 			MonoTodoResultsImage.Visible = false;
@@ -49,6 +56,7 @@ namespace MoMA
 			SubmitLabel.Visible = false;
 			SubmitReportButton.Visible = false;
 			ViewReportButton.Visible = false;
+			OptionalGroupBox.Visible = false;
 		}
 
 		private void SetupForm (WizardStep step)
@@ -63,6 +71,9 @@ namespace MoMA
 					AssemblyRemoveButton.Visible = true;
 					AssemblyLabel.Visible = true;
 					AssemblyInstructions.Visible = true;
+					CheckUpdateLink.Visible = true;
+					MonoVersionCombo.Visible = true;
+					MonoVersionLabel.Visible = true;
 					break;
 				case WizardStep.ViewResults:
 					AnalysisResultsLabel.Visible = true;
@@ -85,6 +96,8 @@ namespace MoMA
 					SubmitReportButton.Visible = true;
 					ViewReportButton.Visible = true;
 					NextButton.Text = "Close";
+					OptionalGroupBox.Visible = true;
+					OptionalNameBox.Focus ();
 					break;
 			}
 
@@ -101,9 +114,12 @@ namespace MoMA
 					break;
 				case WizardStep.ChooseAssemblies:
 					VerifyValidAssemblies ();
-					if (AssemblyListView.Items.Count == 0)
-					{
+					if (AssemblyListView.Items.Count == 0) {
 						MessageBox.Show ("Please choose at least one assembly to analyze.");
+						return;
+					}
+					if (MonoVersionCombo.Items.Count == 0) {
+						MessageBox.Show ("No definition files could be found.  Please try to download the latest definition file.");
 						return;
 					}
 					AnalyzeAssemblies ();
@@ -118,10 +134,10 @@ namespace MoMA
 					Application.Exit ();
 					break;
 			}
-			
+
 			BackButton.Enabled = true;
 		}
-		
+
 		private void BackButton_Click (object sender, EventArgs e)
 		{
 			switch (current_step) {
@@ -153,24 +169,37 @@ namespace MoMA
 
 			if (ofd.ShowDialog () == DialogResult.OK) {
 				foreach (string s in ofd.FileNames) {
-					ListViewItem lvi = new ListViewItem (System.IO.Path.GetFileName (s));
-					lvi.Tag = s;
+					if (!ListContainsAssembly (System.IO.Path.GetFileName (s))) {
+						ListViewItem lvi = new ListViewItem (System.IO.Path.GetFileName (s));
+						lvi.Tag = s;
 
-					AssemblyListView.Items.Add (lvi);
+						AssemblyListView.Items.Add (lvi);
+					}
 				}
 			}
 		}
 
+		private bool ListContainsAssembly (string file)
+		{
+			foreach (ListViewItem lvi in AssemblyListView.Items)
+				if (lvi.Text == file)
+					return true;
+
+			return false;
+		}
+
 		private void AssemblyRemoveButton_Click (object sender, EventArgs e)
 		{
-			if (AssemblyListView.SelectedItems.Count > 0)
-				AssemblyListView.Items.Remove (AssemblyListView.SelectedItems[0]);
+			if (AssemblyListView.SelectedItems.Count > 0) {
+				ListView.SelectedListViewItemCollection list = AssemblyListView.SelectedItems;
+
+				foreach (ListViewItem lvi in list)
+					AssemblyListView.Items.Remove (lvi);
+			}
 		}
 
 		private void AnalyzeAssemblies ()
 		{
-			AssemblyAnalyzer aa = new AssemblyAnalyzer ();
-
 			// Keep total counts for all assemblies for summary screen
 			int monotodocount = 0;
 			int notimplementedcount = 0;
@@ -180,52 +209,60 @@ namespace MoMA
 			string todo_defs = Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "monotodo.txt");
 			string nie_defs = Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "exception.txt");
 			string missing_defs = Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "missing.txt");
-			
+
 			// Load the definition files
-			aa.LoadDefinitions (todo_defs, nie_defs, missing_defs);
-			
+			FileDefinition definitions = (FileDefinition)MonoVersionCombo.SelectedItem;
+
+			if (definitions.FileName != loaded_definitions) {
+				aa.LoadDefinitions (definitions.FileName);
+				loaded_definitions = definitions.FileName;
+			}
+
 			// Scan user's assemblies for P/Invokes
 			foreach (ListViewItem lvi in AssemblyListView.Items)
 				aa.ScanAssemblyForPInvokes ((string)lvi.Tag);
-				
+
 			// Start the results reports
 			if (!Directory.Exists (Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Reports")))
 				Directory.CreateDirectory (Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Reports"));
-			
-			string output_path = Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Reports");		
+
+			string output_path = Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Reports");
 			XhtmlTextWriter report = aa.BeginHtmlReport (new FileStream (Path.Combine (output_path, "output.html"), FileMode.Create));
 			StreamWriter submit_report = aa.BeginTextReport (new FileStream (Path.Combine (output_path, "submit.txt"), FileMode.Create));
-			
+
 			// Scan user's assemblies for issues
-			foreach (ListViewItem lvi in AssemblyListView.Items)
-			{
+			foreach (ListViewItem lvi in AssemblyListView.Items) {
 				aa.AnalyzeAssembly ((string)lvi.Tag);
 
 				report.WriteFullBeginTag ("h2");
 				report.WriteEncodedText (Path.GetFileName ((string)lvi.Tag));
 				report.WriteEndTag ("h2");
-				
+
 				aa.AddResultsToHtmlReport (report);
 				aa.AddResultsToTextReport (submit_report);
-				
+
 				monotodocount += aa.MonoTodoResults.Count;
 				notimplementedcount += aa.NotImplementedExceptionResults.Count;
 				pinvokecount += aa.PInvokeResults.Count;
 				missingcount += aa.MissingMethodResults.Count;
-				
+
 				aa.MissingMethodResults.Clear ();
 				aa.MonoTodoResults.Clear ();
-				aa.NotImplementedExceptionResults.Clear  ();
+				aa.NotImplementedExceptionResults.Clear ();
 				aa.PInvokeResults.Clear ();
 			}
-			
+
 			// Finish up the reports
 			aa.FinishHtmlReport (report);
+			
+			if (monotodocount + notimplementedcount + pinvokecount + missingcount == 0)
+				submit_report.WriteLine ("No Issues Found!");
+				
 			aa.FinishTextReport (submit_report);
 
 			// Update the summary screen
 			UpdateResultsSummary (monotodocount, notimplementedcount, pinvokecount, missingcount);
-			
+
 			// Enable the report submission button
 			SubmitReportButton.Enabled = true;
 		}
@@ -296,11 +333,22 @@ namespace MoMA
 			SubmitReportButton.Enabled = false;
 			string output_path = Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Reports");
 			string file = Path.Combine (output_path, "submit.txt");
-			
-			OptionalInformation optional = new OptionalInformation (file);
-			optional.ShowDialog ();
+
+			try {
+				using (StreamReader sr = new StreamReader (file)) {
+					string results = sr.ReadToEnd ();
+
+					if (AssemblyAnalyzer.SubmitResults (results, (MonoVersionCombo.Items[0] as FileDefinition).Version, OptionalNameBox.Text, OptionalEmailBox.Text, OptionalOrganizationBox.Text, OptionalHomePageBox.Text, OptionalCommentsBox.Text))
+						MessageBox.Show ("Results successfully submitted.  Thanks!");
+					else
+						MessageBox.Show ("Result submission failed.  Please try again later.");
+				}
+			}
+			catch (Exception ex) {
+				MessageBox.Show ("Result submission failed (Exception={0}).", ex.GetType ().ToString ());
+			}
 		}
-		
+
 		private void VerifyValidAssemblies ()
 		{
 			List<ListViewItem> invalid_assemblies = new List<ListViewItem> ();
@@ -311,14 +359,38 @@ namespace MoMA
 
 			string msg = "The following are not valid .Net assemblies and will not be scanned:\n";
 
-			foreach (ListViewItem lvi in invalid_assemblies)
-			{
+			foreach (ListViewItem lvi in invalid_assemblies) {
 				msg += string.Format ("{0}\n", lvi.Text);
 				AssemblyListView.Items.Remove (lvi);
 			}
-			
+
 			if (invalid_assemblies.Count > 0)
 				MessageBox.Show (msg);
+		}
+
+		private void SetupMonoVersion ()
+		{
+			MonoVersionCombo.Items.Clear ();
+			
+			foreach (FileDefinition fd in DefinitionHandler.FindAvailableVersions (Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Definitions")))
+				MonoVersionCombo.Items.Add (fd);
+
+			if (MonoVersionCombo.Items.Count > 0)
+				MonoVersionCombo.SelectedIndex = 0;
+		}
+
+		private void CheckUpdateLink_LinkClicked (object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			FileDefinition fd = DefinitionHandler.CheckLatestVersionFromInternet ();
+			
+			if (MonoVersionCombo.Items.Count == 0 || fd.Date > (MonoVersionCombo.Items[0] as FileDefinition).Date) {
+				DefinitionDownloader dd = new DefinitionDownloader ();
+				dd.LoadDefinitionFile (fd);
+				if (dd.ShowDialog () == DialogResult.OK)
+					SetupMonoVersion ();
+			}
+			else
+				MessageBox.Show (string.Format("You have the most recent version: {0}", fd.Version));
 		}
 	}
 }

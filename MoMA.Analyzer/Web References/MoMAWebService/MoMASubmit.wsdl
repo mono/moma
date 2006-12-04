@@ -16,7 +16,18 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
+      <xs:element name="GetLatestDefinitionsVersion">
+        <xs:complexType />
+      </xs:element>
+      <xs:element name="GetLatestDefinitionsVersionResponse">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="1" name="GetLatestDefinitionsVersionResult" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
       <xs:element name="boolean" type="xs:boolean" />
+      <xs:element name="string" type="xs:string" />
     </s:schema>
   </types>
   <message name="SubmitResultsSoapIn">
@@ -25,17 +36,31 @@
   <message name="SubmitResultsSoapOut">
     <part name="parameters" element="s0:SubmitResultsResponse" />
   </message>
+  <message name="GetLatestDefinitionsVersionSoapIn">
+    <part name="parameters" element="s0:GetLatestDefinitionsVersion" />
+  </message>
+  <message name="GetLatestDefinitionsVersionSoapOut">
+    <part name="parameters" element="s0:GetLatestDefinitionsVersionResponse" />
+  </message>
   <message name="SubmitResultsHttpGetIn">
     <part name="results" type="s:string" />
   </message>
   <message name="SubmitResultsHttpGetOut">
     <part name="Body" element="s0:boolean" />
   </message>
+  <message name="GetLatestDefinitionsVersionHttpGetIn" />
+  <message name="GetLatestDefinitionsVersionHttpGetOut">
+    <part name="Body" element="s0:string" />
+  </message>
   <message name="SubmitResultsHttpPostIn">
     <part name="results" type="s:string" />
   </message>
   <message name="SubmitResultsHttpPostOut">
     <part name="Body" element="s0:boolean" />
+  </message>
+  <message name="GetLatestDefinitionsVersionHttpPostIn" />
+  <message name="GetLatestDefinitionsVersionHttpPostOut">
+    <part name="Body" element="s0:string" />
   </message>
   <portType name="MoMASubmitSoap">
     <operation name="SubmitResults">
@@ -45,6 +70,14 @@
       </wsdl:documentation>
       <input message="s0:SubmitResultsSoapIn" />
       <output message="s0:SubmitResultsSoapOut" />
+    </operation>
+    <operation name="GetLatestDefinitionsVersion">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+      </wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+      </wsdl:documentation>
+      <input message="s0:GetLatestDefinitionsVersionSoapIn" />
+      <output message="s0:GetLatestDefinitionsVersionSoapOut" />
     </operation>
   </portType>
   <portType name="MoMASubmitHttpGet">
@@ -56,6 +89,14 @@
       <input message="s0:SubmitResultsHttpGetIn" />
       <output message="s0:SubmitResultsHttpGetOut" />
     </operation>
+    <operation name="GetLatestDefinitionsVersion">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+      </wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+      </wsdl:documentation>
+      <input message="s0:GetLatestDefinitionsVersionHttpGetIn" />
+      <output message="s0:GetLatestDefinitionsVersionHttpGetOut" />
+    </operation>
   </portType>
   <portType name="MoMASubmitHttpPost">
     <operation name="SubmitResults">
@@ -66,11 +107,28 @@
       <input message="s0:SubmitResultsHttpPostIn" />
       <output message="s0:SubmitResultsHttpPostOut" />
     </operation>
+    <operation name="GetLatestDefinitionsVersion">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+      </wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+      </wsdl:documentation>
+      <input message="s0:GetLatestDefinitionsVersionHttpPostIn" />
+      <output message="s0:GetLatestDefinitionsVersionHttpPostOut" />
+    </operation>
   </portType>
   <binding name="MoMASubmitSoap" type="s0:MoMASubmitSoap">
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
     <operation name="SubmitResults">
       <soap:operation soapAction="http://mono-project.com/MoMASubmit/SubmitResults" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+    <operation name="GetLatestDefinitionsVersion">
+      <soap:operation soapAction="http://mono-project.com/MoMASubmit/GetLatestDefinitionsVersion" style="document" />
       <input>
         <soap:body use="literal" />
       </input>
@@ -90,11 +148,29 @@
         <mime:mimeXml part="Body" />
       </output>
     </operation>
+    <operation name="GetLatestDefinitionsVersion">
+      <http:operation location="/GetLatestDefinitionsVersion" />
+      <input>
+        <http:urlEncoded />
+      </input>
+      <output>
+        <mime:mimeXml part="Body" />
+      </output>
+    </operation>
   </binding>
   <binding name="MoMASubmitHttpPost" type="s0:MoMASubmitHttpPost">
     <http:binding verb="POST" />
     <operation name="SubmitResults">
       <http:operation location="/SubmitResults" />
+      <input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </input>
+      <output>
+        <mime:mimeXml part="Body" />
+      </output>
+    </operation>
+    <operation name="GetLatestDefinitionsVersion">
+      <http:operation location="/GetLatestDefinitionsVersion" />
       <input>
         <mime:content type="application/x-www-form-urlencoded" />
       </input>

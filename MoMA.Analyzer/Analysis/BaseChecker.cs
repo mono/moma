@@ -31,9 +31,6 @@ namespace MoMA.Analyzer
 
 		public virtual bool Matches (string method, out Method match)
 		{
-			if (method.Contains ("AddMemoryPressure"))
-				Console.WriteLine (method);
-
 			if (data.ContainsKey (method)) {
 				match = data[method];
 				return true;

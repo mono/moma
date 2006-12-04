@@ -57,11 +57,26 @@ namespace MoMA
 			this.ViewReportButton = new System.Windows.Forms.Button ();
 			this.SubmitReportButton = new System.Windows.Forms.Button ();
 			this.label2 = new System.Windows.Forms.Label ();
+			this.MonoVersionCombo = new System.Windows.Forms.ComboBox ();
+			this.MonoVersionLabel = new System.Windows.Forms.Label ();
+			this.CheckUpdateLink = new System.Windows.Forms.LinkLabel ();
+			this.OptionalGroupBox = new System.Windows.Forms.GroupBox ();
+			this.OptionalHomePageBox = new System.Windows.Forms.TextBox ();
+			this.OptionalOrganizationBox = new System.Windows.Forms.TextBox ();
+			this.OptionalCommentsBox = new System.Windows.Forms.TextBox ();
+			this.label7 = new System.Windows.Forms.Label ();
+			this.OptionalEmailBox = new System.Windows.Forms.TextBox ();
+			this.label3 = new System.Windows.Forms.Label ();
+			this.OptionalNameBox = new System.Windows.Forms.TextBox ();
+			this.label4 = new System.Windows.Forms.Label ();
+			this.label6 = new System.Windows.Forms.Label ();
+			this.label5 = new System.Windows.Forms.Label ();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit ();
 			((System.ComponentModel.ISupportInitialize)(this.MonoTodoResultsImage)).BeginInit ();
 			((System.ComponentModel.ISupportInitialize)(this.NotImplementedResultsImage)).BeginInit ();
 			((System.ComponentModel.ISupportInitialize)(this.PInvokesResultsImage)).BeginInit ();
 			((System.ComponentModel.ISupportInitialize)(this.MissingResultsImage)).BeginInit ();
+			this.OptionalGroupBox.SuspendLayout ();
 			this.SuspendLayout ();
 			// 
 			// pictureBox1
@@ -110,7 +125,7 @@ namespace MoMA
 			// 
 			this.StepLabel.AutoSize = true;
 			this.StepLabel.Font = new System.Drawing.Font ("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.StepLabel.Location = new System.Drawing.Point (12, 414);
+			this.StepLabel.Location = new System.Drawing.Point (284, 429);
 			this.StepLabel.Name = "StepLabel";
 			this.StepLabel.Size = new System.Drawing.Size (60, 14);
 			this.StepLabel.TabIndex = 4;
@@ -160,7 +175,6 @@ namespace MoMA
             this.columnHeader1});
 			this.AssemblyListView.FullRowSelect = true;
 			this.AssemblyListView.Location = new System.Drawing.Point (173, 123);
-			this.AssemblyListView.MultiSelect = false;
 			this.AssemblyListView.Name = "AssemblyListView";
 			this.AssemblyListView.Size = new System.Drawing.Size (413, 145);
 			this.AssemblyListView.TabIndex = 10;
@@ -174,7 +188,6 @@ namespace MoMA
 			// 
 			// MonoTodoResultsImage
 			// 
-			this.MonoTodoResultsImage.Image = global::MoMA.Properties.Resources.button_ok;
 			this.MonoTodoResultsImage.Location = new System.Drawing.Point (193, 214);
 			this.MonoTodoResultsImage.Name = "MonoTodoResultsImage";
 			this.MonoTodoResultsImage.Size = new System.Drawing.Size (22, 22);
@@ -210,7 +223,6 @@ namespace MoMA
 			// 
 			// NotImplementedResultsImage
 			// 
-			this.NotImplementedResultsImage.Image = global::MoMA.Properties.Resources.button_ok;
 			this.NotImplementedResultsImage.Location = new System.Drawing.Point (193, 186);
 			this.NotImplementedResultsImage.Name = "NotImplementedResultsImage";
 			this.NotImplementedResultsImage.Size = new System.Drawing.Size (22, 22);
@@ -228,7 +240,6 @@ namespace MoMA
 			// 
 			// PInvokesResultsImage
 			// 
-			this.PInvokesResultsImage.Image = global::MoMA.Properties.Resources.button_ok;
 			this.PInvokesResultsImage.Location = new System.Drawing.Point (193, 158);
 			this.PInvokesResultsImage.Name = "PInvokesResultsImage";
 			this.PInvokesResultsImage.Size = new System.Drawing.Size (22, 22);
@@ -257,7 +268,6 @@ namespace MoMA
 			// 
 			// MissingResultsImage
 			// 
-			this.MissingResultsImage.Image = global::MoMA.Properties.Resources.button_ok;
 			this.MissingResultsImage.Location = new System.Drawing.Point (193, 130);
 			this.MissingResultsImage.Name = "MissingResultsImage";
 			this.MissingResultsImage.Size = new System.Drawing.Size (22, 22);
@@ -289,7 +299,7 @@ namespace MoMA
 			// ProjectLink
 			// 
 			this.ProjectLink.Font = new System.Drawing.Font ("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.ProjectLink.Location = new System.Drawing.Point (210, 438);
+			this.ProjectLink.Location = new System.Drawing.Point (243, 445);
 			this.ProjectLink.Name = "ProjectLink";
 			this.ProjectLink.Size = new System.Drawing.Size (172, 14);
 			this.ProjectLink.TabIndex = 26;
@@ -300,7 +310,7 @@ namespace MoMA
 			// SubmitLabel
 			// 
 			this.SubmitLabel.Font = new System.Drawing.Font ("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.SubmitLabel.Location = new System.Drawing.Point (173, 98);
+			this.SubmitLabel.Location = new System.Drawing.Point (159, 83);
 			this.SubmitLabel.Name = "SubmitLabel";
 			this.SubmitLabel.Size = new System.Drawing.Size (416, 20);
 			this.SubmitLabel.TabIndex = 27;
@@ -309,18 +319,18 @@ namespace MoMA
 			// SubmitInstructions
 			// 
 			this.SubmitInstructions.Font = new System.Drawing.Font ("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.SubmitInstructions.Location = new System.Drawing.Point (173, 123);
+			this.SubmitInstructions.Location = new System.Drawing.Point (159, 108);
 			this.SubmitInstructions.Name = "SubmitInstructions";
-			this.SubmitInstructions.Size = new System.Drawing.Size (416, 183);
+			this.SubmitInstructions.Size = new System.Drawing.Size (483, 103);
 			this.SubmitInstructions.TabIndex = 28;
 			this.SubmitInstructions.Text = resources.GetString ("SubmitInstructions.Text");
 			// 
 			// ViewReportButton
 			// 
-			this.ViewReportButton.Location = new System.Drawing.Point (411, 325);
+			this.ViewReportButton.Location = new System.Drawing.Point (463, 382);
 			this.ViewReportButton.Name = "ViewReportButton";
 			this.ViewReportButton.Size = new System.Drawing.Size (86, 30);
-			this.ViewReportButton.TabIndex = 29;
+			this.ViewReportButton.TabIndex = 6;
 			this.ViewReportButton.Text = "View Report";
 			this.ViewReportButton.UseVisualStyleBackColor = true;
 			this.ViewReportButton.Click += new System.EventHandler (this.ViewReportButton_Click);
@@ -328,10 +338,10 @@ namespace MoMA
 			// SubmitReportButton
 			// 
 			this.SubmitReportButton.Enabled = false;
-			this.SubmitReportButton.Location = new System.Drawing.Point (503, 325);
+			this.SubmitReportButton.Location = new System.Drawing.Point (555, 382);
 			this.SubmitReportButton.Name = "SubmitReportButton";
 			this.SubmitReportButton.Size = new System.Drawing.Size (86, 30);
-			this.SubmitReportButton.TabIndex = 30;
+			this.SubmitReportButton.TabIndex = 7;
 			this.SubmitReportButton.Text = "Submit Report";
 			this.SubmitReportButton.UseVisualStyleBackColor = true;
 			this.SubmitReportButton.Click += new System.EventHandler (this.SubmitReportButton_Click);
@@ -339,12 +349,143 @@ namespace MoMA
 			// label2
 			// 
 			this.label2.AutoSize = true;
+			this.label2.BackColor = System.Drawing.Color.Transparent;
 			this.label2.Font = new System.Drawing.Font ("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label2.Location = new System.Drawing.Point (12, 438);
+			this.label2.Location = new System.Drawing.Point (9, 445);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size (63, 14);
 			this.label2.TabIndex = 32;
-			this.label2.Text = "Version 1.0";
+			this.label2.Text = "Version 1.1";
+			// 
+			// MonoVersionCombo
+			// 
+			this.MonoVersionCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.MonoVersionCombo.FormattingEnabled = true;
+			this.MonoVersionCombo.Location = new System.Drawing.Point (386, 339);
+			this.MonoVersionCombo.Name = "MonoVersionCombo";
+			this.MonoVersionCombo.Size = new System.Drawing.Size (140, 21);
+			this.MonoVersionCombo.TabIndex = 34;
+			// 
+			// MonoVersionLabel
+			// 
+			this.MonoVersionLabel.AutoSize = true;
+			this.MonoVersionLabel.Font = new System.Drawing.Font ("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.MonoVersionLabel.Location = new System.Drawing.Point (211, 340);
+			this.MonoVersionLabel.Name = "MonoVersionLabel";
+			this.MonoVersionLabel.Size = new System.Drawing.Size (169, 16);
+			this.MonoVersionLabel.TabIndex = 35;
+			this.MonoVersionLabel.Text = "Test Against Mono Version:";
+			// 
+			// CheckUpdateLink
+			// 
+			this.CheckUpdateLink.Font = new System.Drawing.Font ("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.CheckUpdateLink.Location = new System.Drawing.Point (389, 366);
+			this.CheckUpdateLink.Name = "CheckUpdateLink";
+			this.CheckUpdateLink.Size = new System.Drawing.Size (137, 14);
+			this.CheckUpdateLink.TabIndex = 36;
+			this.CheckUpdateLink.TabStop = true;
+			this.CheckUpdateLink.Text = "Check for newer version";
+			this.CheckUpdateLink.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler (this.CheckUpdateLink_LinkClicked);
+			// 
+			// OptionalGroupBox
+			// 
+			this.OptionalGroupBox.Controls.Add (this.OptionalHomePageBox);
+			this.OptionalGroupBox.Controls.Add (this.OptionalOrganizationBox);
+			this.OptionalGroupBox.Controls.Add (this.OptionalCommentsBox);
+			this.OptionalGroupBox.Controls.Add (this.label7);
+			this.OptionalGroupBox.Controls.Add (this.OptionalEmailBox);
+			this.OptionalGroupBox.Controls.Add (this.label3);
+			this.OptionalGroupBox.Controls.Add (this.OptionalNameBox);
+			this.OptionalGroupBox.Controls.Add (this.label4);
+			this.OptionalGroupBox.Controls.Add (this.label6);
+			this.OptionalGroupBox.Controls.Add (this.label5);
+			this.OptionalGroupBox.Location = new System.Drawing.Point (161, 211);
+			this.OptionalGroupBox.Name = "OptionalGroupBox";
+			this.OptionalGroupBox.Size = new System.Drawing.Size (479, 165);
+			this.OptionalGroupBox.TabIndex = 37;
+			this.OptionalGroupBox.TabStop = false;
+			this.OptionalGroupBox.Text = "Optional additional information to submit:";
+			// 
+			// OptionalHomePageBox
+			// 
+			this.OptionalHomePageBox.Location = new System.Drawing.Point (6, 139);
+			this.OptionalHomePageBox.Name = "OptionalHomePageBox";
+			this.OptionalHomePageBox.Size = new System.Drawing.Size (182, 20);
+			this.OptionalHomePageBox.TabIndex = 4;
+			// 
+			// OptionalOrganizationBox
+			// 
+			this.OptionalOrganizationBox.Location = new System.Drawing.Point (6, 103);
+			this.OptionalOrganizationBox.Name = "OptionalOrganizationBox";
+			this.OptionalOrganizationBox.Size = new System.Drawing.Size (182, 20);
+			this.OptionalOrganizationBox.TabIndex = 3;
+			// 
+			// OptionalCommentsBox
+			// 
+			this.OptionalCommentsBox.Location = new System.Drawing.Point (208, 29);
+			this.OptionalCommentsBox.Multiline = true;
+			this.OptionalCommentsBox.Name = "OptionalCommentsBox";
+			this.OptionalCommentsBox.Size = new System.Drawing.Size (265, 130);
+			this.OptionalCommentsBox.TabIndex = 5;
+			// 
+			// label7
+			// 
+			this.label7.AutoSize = true;
+			this.label7.Location = new System.Drawing.Point (207, 16);
+			this.label7.Name = "label7";
+			this.label7.Size = new System.Drawing.Size (148, 13);
+			this.label7.TabIndex = 8;
+			this.label7.Text = "Comments for the Mono team:";
+			// 
+			// OptionalEmailBox
+			// 
+			this.OptionalEmailBox.Location = new System.Drawing.Point (6, 65);
+			this.OptionalEmailBox.Name = "OptionalEmailBox";
+			this.OptionalEmailBox.Size = new System.Drawing.Size (182, 20);
+			this.OptionalEmailBox.TabIndex = 2;
+			// 
+			// label3
+			// 
+			this.label3.AutoSize = true;
+			this.label3.Location = new System.Drawing.Point (6, 16);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size (41, 13);
+			this.label3.TabIndex = 1;
+			this.label3.Text = "Name: ";
+			// 
+			// OptionalNameBox
+			// 
+			this.OptionalNameBox.Location = new System.Drawing.Point (6, 29);
+			this.OptionalNameBox.Name = "OptionalNameBox";
+			this.OptionalNameBox.Size = new System.Drawing.Size (182, 20);
+			this.OptionalNameBox.TabIndex = 1;
+			// 
+			// label4
+			// 
+			this.label4.AutoSize = true;
+			this.label4.Location = new System.Drawing.Point (7, 52);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size (35, 13);
+			this.label4.TabIndex = 9;
+			this.label4.Text = "Email:";
+			// 
+			// label6
+			// 
+			this.label6.AutoSize = true;
+			this.label6.Location = new System.Drawing.Point (6, 126);
+			this.label6.Name = "label6";
+			this.label6.Size = new System.Drawing.Size (102, 13);
+			this.label6.TabIndex = 5;
+			this.label6.Text = "Project Home Page:";
+			// 
+			// label5
+			// 
+			this.label5.AutoSize = true;
+			this.label5.Location = new System.Drawing.Point (7, 89);
+			this.label5.Name = "label5";
+			this.label5.Size = new System.Drawing.Size (69, 13);
+			this.label5.TabIndex = 2;
+			this.label5.Text = "Organization:";
 			// 
 			// MainForm
 			// 
@@ -353,6 +494,10 @@ namespace MoMA
 			this.BackColor = System.Drawing.Color.White;
 			this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject ("$this.BackgroundImage")));
 			this.ClientSize = new System.Drawing.Size (719, 471);
+			this.Controls.Add (this.OptionalGroupBox);
+			this.Controls.Add (this.CheckUpdateLink);
+			this.Controls.Add (this.MonoVersionLabel);
+			this.Controls.Add (this.MonoVersionCombo);
 			this.Controls.Add (this.label2);
 			this.Controls.Add (this.SubmitReportButton);
 			this.Controls.Add (this.ViewReportButton);
@@ -382,13 +527,17 @@ namespace MoMA
 			this.Controls.Add (this.pictureBox1);
 			this.Controls.Add (this.AssemblyInstructions);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject ("$this.Icon")));
 			this.Name = "MainForm";
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "MoMA: Mono Migration Analyzer";
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit ();
 			((System.ComponentModel.ISupportInitialize)(this.MonoTodoResultsImage)).EndInit ();
 			((System.ComponentModel.ISupportInitialize)(this.NotImplementedResultsImage)).EndInit ();
 			((System.ComponentModel.ISupportInitialize)(this.PInvokesResultsImage)).EndInit ();
 			((System.ComponentModel.ISupportInitialize)(this.MissingResultsImage)).EndInit ();
+			this.OptionalGroupBox.ResumeLayout (false);
+			this.OptionalGroupBox.PerformLayout ();
 			this.ResumeLayout (false);
 			this.PerformLayout ();
 
@@ -425,5 +574,19 @@ namespace MoMA
 		private System.Windows.Forms.Button ViewReportButton;
 		private System.Windows.Forms.Button SubmitReportButton;
 		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.ComboBox MonoVersionCombo;
+		private System.Windows.Forms.Label MonoVersionLabel;
+		private System.Windows.Forms.LinkLabel CheckUpdateLink;
+		private System.Windows.Forms.GroupBox OptionalGroupBox;
+		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.TextBox OptionalNameBox;
+		private System.Windows.Forms.TextBox OptionalEmailBox;
+		private System.Windows.Forms.Label label4;
+		private System.Windows.Forms.TextBox OptionalOrganizationBox;
+		private System.Windows.Forms.Label label5;
+		private System.Windows.Forms.TextBox OptionalHomePageBox;
+		private System.Windows.Forms.Label label6;
+		private System.Windows.Forms.Label label7;
+		private System.Windows.Forms.TextBox OptionalCommentsBox;
 	}
 }
