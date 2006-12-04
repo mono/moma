@@ -13,10 +13,14 @@ namespace MoMA
 	public partial class DefinitionDownloader : Form
 	{
 		private FileDefinition fd;
-		
+		private string image_directory;
+
 		public DefinitionDownloader ()
 		{
 			InitializeComponent ();
+
+			image_directory = Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Resources");
+			LoadImages ();
 		}
 
 		public void LoadDefinitionFile (FileDefinition fd)
@@ -83,6 +87,17 @@ namespace MoMA
 				return true;
 				
 			return false;
+		}
+
+		private void LoadImages ()
+		{
+			try {
+				this.BackgroundImage = Image.FromFile (Path.Combine (image_directory, "monoback.png"));
+				DownloadSpinner.Image = Image.FromFile (Path.Combine (image_directory, "spinner.gif"));
+			}
+			catch (Exception ex) {
+				MessageBox.Show ("There was an error loading resources for MoMA, please try downloading a new copy.\nError: {0}", ex.ToString ());
+			}
 		}
 	}
 }

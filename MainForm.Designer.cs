@@ -82,7 +82,6 @@ namespace MoMA
 			// pictureBox1
 			// 
 			this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
-			this.pictureBox1.Image = global::MoMA.Properties.Resources.monkey;
 			this.pictureBox1.Location = new System.Drawing.Point (12, 12);
 			this.pictureBox1.Name = "pictureBox1";
 			this.pictureBox1.Size = new System.Drawing.Size (100, 119);
@@ -151,7 +150,6 @@ namespace MoMA
 			// 
 			// AssemblyAddButton
 			// 
-			this.AssemblyAddButton.Image = global::MoMA.Properties.Resources.list_add;
 			this.AssemblyAddButton.Location = new System.Drawing.Point (592, 123);
 			this.AssemblyAddButton.Name = "AssemblyAddButton";
 			this.AssemblyAddButton.Size = new System.Drawing.Size (30, 30);
@@ -161,7 +159,6 @@ namespace MoMA
 			// 
 			// AssemblyRemoveButton
 			// 
-			this.AssemblyRemoveButton.Image = global::MoMA.Properties.Resources.list_remove;
 			this.AssemblyRemoveButton.Location = new System.Drawing.Point (592, 159);
 			this.AssemblyRemoveButton.Name = "AssemblyRemoveButton";
 			this.AssemblyRemoveButton.Size = new System.Drawing.Size (30, 30);
@@ -492,7 +489,6 @@ namespace MoMA
 			this.AutoScaleDimensions = new System.Drawing.SizeF (6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
-			this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject ("$this.BackgroundImage")));
 			this.ClientSize = new System.Drawing.Size (719, 471);
 			this.Controls.Add (this.OptionalGroupBox);
 			this.Controls.Add (this.CheckUpdateLink);
@@ -527,7 +523,6 @@ namespace MoMA
 			this.Controls.Add (this.pictureBox1);
 			this.Controls.Add (this.AssemblyInstructions);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject ("$this.Icon")));
 			this.Name = "MainForm";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "MoMA: Mono Migration Analyzer";

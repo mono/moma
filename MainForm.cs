@@ -14,13 +14,19 @@ namespace MoMA
 	public partial class MainForm : Form
 	{
 		private WizardStep current_step;
-		private string loaded_definitions;
 		private AssemblyAnalyzer aa;
-
+		private string loaded_definitions;
+		private string image_directory;
+		
+		private Image success_image;
+		private Image failed_image;
+		
 		public MainForm ()
 		{
 			InitializeComponent ();
 
+			image_directory = Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Resources");
+			LoadImages ();
 			ResetForm ();
 			SetupForm (WizardStep.Introduction);
 			SetupMonoVersion ();
@@ -270,38 +276,38 @@ namespace MoMA
 		private void UpdateResultsSummary (int monotodocount, int notimplementedcount, int pinvokecount, int missingcount)
 		{
 			if (monotodocount == 0) {
-				MonoTodoResultsImage.Image = MoMA.Properties.Resources.button_ok;
+				MonoTodoResultsImage.Image = success_image;
 				MonoTodoResultsLabel.Text = "No methods marked with [MonoTodo] are called.";
 			}
 			else {
-				MonoTodoResultsImage.Image = MoMA.Properties.Resources.dialog_warning;
+				MonoTodoResultsImage.Image = failed_image;
 				MonoTodoResultsLabel.Text = String.Format ("Methods called marked with [MonoTodo]: {0}", monotodocount);
 			}
 
 			if (notimplementedcount == 0) {
-				NotImplementedResultsImage.Image = MoMA.Properties.Resources.button_ok;
+				NotImplementedResultsImage.Image = success_image;
 				NotImplementedResultsLabel.Text = "No methods that throw NotImplementedException are called.";
 			}
 			else {
-				NotImplementedResultsImage.Image = MoMA.Properties.Resources.dialog_warning;
+				NotImplementedResultsImage.Image = failed_image;
 				NotImplementedResultsLabel.Text = String.Format ("Methods called that throw NotImplementedException: {0}", notimplementedcount);
 			}
 
 			if (pinvokecount == 0) {
-				PInvokesResultsImage.Image = MoMA.Properties.Resources.button_ok;
+				PInvokesResultsImage.Image = success_image;
 				PInvokesResultsLabel.Text = "No P/Invokes are called.";
 			}
 			else {
-				PInvokesResultsImage.Image = MoMA.Properties.Resources.dialog_warning;
+				PInvokesResultsImage.Image = failed_image;
 				PInvokesResultsLabel.Text = String.Format ("P/Invokes called: {0}", pinvokecount);
 			}
 
 			if (missingcount == 0) {
-				MissingResultsImage.Image = MoMA.Properties.Resources.button_ok;
+				MissingResultsImage.Image = success_image;
 				MissingResultsLabel.Text = "All methods called exist in Mono.";
 			}
 			else {
-				MissingResultsImage.Image = MoMA.Properties.Resources.dialog_warning;
+				MissingResultsImage.Image = failed_image;
 				MissingResultsLabel.Text = String.Format ("Methods that are still missing in Mono: {0}", missingcount);
 			}
 
@@ -391,6 +397,21 @@ namespace MoMA
 			}
 			else
 				MessageBox.Show (string.Format("You have the most recent version: {0}", fd.Version));
+		}
+		
+		private void LoadImages ()
+		{
+			try {
+				this.BackgroundImage = Image.FromFile (Path.Combine (image_directory, "monoback.png"));
+				pictureBox1.Image = Image.FromFile (Path.Combine (image_directory, "monkey.png"));
+				AssemblyAddButton.Image = Image.FromFile (Path.Combine (image_directory, "list-add.png"));
+				AssemblyRemoveButton.Image = Image.FromFile (Path.Combine (image_directory, "list-remove.png"));
+				success_image = Image.FromFile (Path.Combine (image_directory, "button_ok.png"));
+				failed_image = Image.FromFile (Path.Combine (image_directory, "dialog-warning.png"));
+			}
+			catch (Exception ex) {
+				MessageBox.Show ("There was an error loading resources for MoMA, please try downloading a new copy.\nError: {0}", ex.ToString ());
+			}
 		}
 	}
 }

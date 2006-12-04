@@ -27,7 +27,6 @@ namespace MoMA
 		/// </summary>
 		private void InitializeComponent ()
 		{
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager (typeof (DefinitionDownloader));
 			this.label1 = new System.Windows.Forms.Label ();
 			this.label2 = new System.Windows.Forms.Label ();
 			this.label3 = new System.Windows.Forms.Label ();
@@ -115,7 +114,6 @@ namespace MoMA
 			// 
 			// DownloadSpinner
 			// 
-			this.DownloadSpinner.Image = global::MoMA.Properties.Resources.spinner;
 			this.DownloadSpinner.Location = new System.Drawing.Point (19, 132);
 			this.DownloadSpinner.Name = "DownloadSpinner";
 			this.DownloadSpinner.Size = new System.Drawing.Size (16, 16);
@@ -139,7 +137,6 @@ namespace MoMA
 			this.AutoScaleDimensions = new System.Drawing.SizeF (6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.White;
-			this.BackgroundImage = global::MoMA.Properties.Resources.monoback;
 			this.CancelButton = this.CloseButton;
 			this.ClientSize = new System.Drawing.Size (403, 167);
 			this.Controls.Add (this.DownloadLabel);
@@ -152,7 +149,6 @@ namespace MoMA
 			this.Controls.Add (this.label2);
 			this.Controls.Add (this.label1);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject ("$this.Icon")));
 			this.Name = "DefinitionDownloader";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "Download New Definitions?";
