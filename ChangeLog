@@ -1,3 +1,23 @@
+12-05-2006  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Add some error handling for *nix due to Process.Start("http://...")
+	not being available.
+	* Fix a ginormous error regarding MonoTODO's on properties.
+		We were only catching:
+			public string MyProperty {
+				[MonoTODO] get { return string.Empty; }
+			}
+
+		and not:
+			[MonoTODO]
+			public string MyProperty {
+				get { return string.Empty; }
+			}
+	Fortunately, we won't have to do a new MoMA release to fix this as it 
+	only affects definition files.  However, the next release of definition
+	files will grow by about 1100 MonoTODO's that are currently missing from
+	the 1.2.2 files.  :(
+
 12-03-2006  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Pack all definition files into one zip file, unzip on the fly.

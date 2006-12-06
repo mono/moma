@@ -27,6 +27,11 @@ namespace MoMA
 
 			image_directory = Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Resources");
 			LoadImages ();
+			
+			// Process.Start doesn't work on Unix, so we'll just hide the link
+			if (Environment.OSVersion.Platform == PlatformID.Unix)
+				ProjectLink.Visible = false;
+				
 			ResetForm ();
 			SetupForm (WizardStep.Introduction);
 			SetupMonoVersion ();
@@ -321,7 +326,14 @@ namespace MoMA
 
 		private void ResultsDetailLink_LinkClicked (object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			System.Diagnostics.Process.Start (Path.Combine (Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Reports"), "output.html"));
+			string report_file = Path.Combine (Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Reports"), "output.html");
+
+			try {
+				System.Diagnostics.Process.Start (report_file);
+			}
+			catch (Exception) {
+				MessageBox.Show (string.Format ("The detail report can be viewed here:\n{0}", report_file));
+			}
 		}
 
 		private void ProjectLink_LinkClicked (object sender, LinkLabelLinkClickedEventArgs e)
@@ -331,7 +343,14 @@ namespace MoMA
 
 		private void ViewReportButton_Click (object sender, EventArgs e)
 		{
-			System.Diagnostics.Process.Start (Path.Combine (Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Reports"), "submit.txt"));
+			string report_file = Path.Combine (Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Reports"), "submit.txt");
+			
+			try {	        
+				System.Diagnostics.Process.Start (report_file);	
+			}
+			catch (Exception) {
+				MessageBox.Show (string.Format ("The report that will be submitted can be viewed here:\n{0}", report_file));
+			}
 		}
 
 		private void SubmitReportButton_Click (object sender, EventArgs e)
