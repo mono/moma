@@ -1,3 +1,9 @@
+01-07-2007  Jonathan Pobst  <monkey@jpobst.com>
+
+	* We were picking up public methods inside private/internal classes, fixed.
+	* NIEXs and TODOs on Mono's side of things were getting picked up
+	even if they weren't in MS's public API, fixed.
+
 12-05-2006  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Add some error handling for *nix due to Process.Start("http://...")

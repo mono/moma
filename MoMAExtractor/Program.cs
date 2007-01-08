@@ -21,6 +21,12 @@ namespace MoMAExtractor
 			List<string> mono_assemblies = GetMonoAssemblies (mono_path);
 			List<string> ms_assemblies = GetMicrosoftAssemblies (ms_path);
 
+			SortedList<string, Method> ms_all = new SortedList<string, Method> ();
+			SortedList<string, Method> missing = new SortedList<string, Method> ();
+
+			foreach (string assembly in ms_assemblies)
+				MethodExtractor.ExtractFromAssembly (assembly, ms_all, null, null);
+				
 			SortedList<string, Method> all = new SortedList<string, Method> ();
 			SortedList<string, Method> todo = new SortedList<string, Method> ();
 			SortedList<string, Method> nie = new SortedList<string, Method> ();
@@ -28,18 +34,27 @@ namespace MoMAExtractor
 			foreach (string assembly in mono_assemblies)
 				MethodExtractor.ExtractFromAssembly (assembly, all, nie, todo);
 
-			WriteListToFile (todo, Path.Combine (output_path, "monotodo.txt"), true);
-			WriteListToFile (nie, Path.Combine (output_path, "exception.txt"), false);
+			// Only use the TODO's that are also in MS's assemblies
+			SortedList<string, Method> final_todo = new SortedList<string, Method> ();
+
+			foreach (string s in todo.Keys)
+				if (ms_all.ContainsKey (s))
+					final_todo[s] = todo[s];
+
+			WriteListToFile (final_todo, Path.Combine (output_path, "monotodo.txt"), true);
+			
+			// Only use the NIEX's that are also in MS's assemblies
+			SortedList<string, Method> final_nie = new SortedList<string, Method> ();
+
+			foreach (string s in nie.Keys)
+				if (ms_all.ContainsKey (s))
+					final_nie[s] = nie[s];
+
+			WriteListToFile (final_nie, Path.Combine (output_path, "exception.txt"), false);
 			
 			todo.Clear ();
 			nie.Clear ();
 
-			SortedList<string, Method> ms_all = new SortedList<string, Method> ();
-			SortedList<string, Method> missing = new SortedList<string, Method> ();
-
-			foreach (string assembly in ms_assemblies)
-				MethodExtractor.ExtractFromAssembly (assembly, ms_all, null, null);
-				
 			MethodExtractor.ComputeMethodDifference (ms_all, all, missing);
 
 			WriteListToFile (missing, Path.Combine (output_path, "missing.txt"), false);
