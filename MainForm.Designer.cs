@@ -350,9 +350,9 @@ namespace MoMA
 			this.label2.Font = new System.Drawing.Font ("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.label2.Location = new System.Drawing.Point (9, 445);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size (63, 14);
+			this.label2.Size = new System.Drawing.Size (72, 14);
 			this.label2.TabIndex = 32;
-			this.label2.Text = "Version 1.1";
+			this.label2.Text = "Version 1.1.1";
 			// 
 			// MonoVersionCombo
 			// 

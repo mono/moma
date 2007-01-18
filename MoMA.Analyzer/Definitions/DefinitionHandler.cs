@@ -47,7 +47,7 @@ namespace MoMA.Analyzer
 					FileDefinition fd = new FileDefinition ();
 					
 					fd.Version = sr.ReadLine ();
-					fd.Date = DateTime.Parse(sr.ReadLine ());
+					fd.Date = DateTime.ParseExact (sr.ReadLine (), "MM/dd/yy", new System.Globalization.CultureInfo("en-US").DateTimeFormat);
 					fd.FileName = s;
 					
 					sr.Close ();

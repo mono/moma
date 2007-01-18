@@ -1,3 +1,7 @@
+01-18-2007  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Apply contributed patch: fix a date parsing error, add makefiles.  Thanks!
+
 01-07-2007  Jonathan Pobst  <monkey@jpobst.com>
 
 	* We were picking up public methods inside private/internal classes, fixed.

@@ -13,7 +13,7 @@ namespace MoMA.Analyzer
 		public FileDefinition (string version, string date, string filename)
 		{
 			this.version = version;
-			this.date = DateTime.Parse(date);
+			this.date = DateTime.ParseExact (date, "MM/dd/yy", new System.Globalization.CultureInfo("en-US").DateTimeFormat);
 			this.filename = filename;
 		}
 		
