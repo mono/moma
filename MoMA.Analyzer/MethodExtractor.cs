@@ -35,7 +35,7 @@ namespace MoMA.Analyzer
 					if (monoTodoMethods != null) {
 						foreach (PropertyDefinition property in type.Properties) {
 							foreach (CustomAttribute ca in property.CustomAttributes) {
-								if (ca.Constructor.DeclaringType.ToString () == "System.MonoTODOAttribute") {
+								if (ca.Constructor.DeclaringType.ToString () == "System.MonoTODOAttribute" || ca.Constructor.DeclaringType.ToString () == "System.MonoLimitationAttribute" || ca.Constructor.DeclaringType.ToString () == "System.MonoNotSupportedAttribute") {
 									if (property.GetMethod != null && ((property.GetMethod.Attributes & MethodAttributes.Family) == MethodAttributes.Family || (property.GetMethod.Attributes & MethodAttributes.Public) == MethodAttributes.Public))
 										monoTodoMethods[property.GetMethod.ToString ()] = new Method (property.GetMethod.ToString (), ca.ConstructorParameters.Count > 0 ? ca.ConstructorParameters[0].ToString () : string.Empty);
 									if (property.SetMethod != null && ((property.SetMethod.Attributes & MethodAttributes.Family) == MethodAttributes.Family || (property.SetMethod.Attributes & MethodAttributes.Public) == MethodAttributes.Public))
@@ -58,7 +58,7 @@ namespace MoMA.Analyzer
 						// If adding MonoTODO methods, check this method
 						if (monoTodoMethods != null)
 							foreach (CustomAttribute ca in method.CustomAttributes)
-								if (ca.Constructor.DeclaringType.ToString () == "System.MonoTODOAttribute")
+								if (ca.Constructor.DeclaringType.ToString () == "System.MonoTODOAttribute" || ca.Constructor.DeclaringType.ToString () == "System.MonoLimitationAttribute" || ca.Constructor.DeclaringType.ToString () == "System.MonoNotSupportedAttribute")
 									monoTodoMethods[method.ToString ()] = new Method (method.ToString (), ca.ConstructorParameters.Count > 0 ? ca.ConstructorParameters[0].ToString () : string.Empty);
 
 						// If adding methods that throw NotImplementedException, look for those
@@ -82,7 +82,7 @@ namespace MoMA.Analyzer
 						// If adding MonoTODO methods, check this method
 						if (monoTodoMethods != null)
 							foreach (CustomAttribute ca in method.CustomAttributes)
-								if (ca.Constructor.DeclaringType.ToString () == "System.MonoTODOAttribute")
+								if (ca.Constructor.DeclaringType.ToString () == "System.MonoTODOAttribute" || ca.Constructor.DeclaringType.ToString () == "System.MonoLimitationAttribute" || ca.Constructor.DeclaringType.ToString () == "System.MonoNotSupportedAttribute")
 									monoTodoMethods[method.ToString ()] = new Method (method.ToString (), ca.ConstructorParameters.Count > 0 ? ca.ConstructorParameters[0].ToString () : string.Empty);
 
 						// If adding methods that throw NotImplementedException, look for those
