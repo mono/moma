@@ -47,8 +47,12 @@ namespace MoMA.Analyzer
 					FileDefinition fd = new FileDefinition ();
 					
 					fd.Version = sr.ReadLine ();
-					fd.Date = DateTime.ParseExact (sr.ReadLine (), "MM/dd/yy", new System.Globalization.CultureInfo("en-US").DateTimeFormat);
-					fd.FileName = s;
+                    string date = sr.ReadLine();
+
+                    // Yes, this will fail in the year 2100, find one of my grandchildren to complain to...
+                    fd.Date = new DateTime(int.Parse(date.Substring(6, 2)) + 2000, int.Parse(date.Substring(0, 2)), int.Parse(date.Substring(3, 2)));
+
+                    fd.FileName = s;
 					
 					sr.Close ();
 					zs.Close ();

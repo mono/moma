@@ -1,3 +1,8 @@
+03-02-2007  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DefinitionHandler.cs, FileDefinition.cs: Parse dates manually instead of
+	trying use DateTime.Parse.  Should fix globalization errors once and for all.
+
 01-18-2007  Jonathan Pobst  <monkey@jpobst.com>
 
 	* Apply contributed patch: fix a date parsing error, add makefiles.  Thanks!

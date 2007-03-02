@@ -13,8 +13,11 @@ namespace MoMA.Analyzer
 		public FileDefinition (string version, string date, string filename)
 		{
 			this.version = version;
-			this.date = DateTime.ParseExact (date, "MM/dd/yy", new System.Globalization.CultureInfo("en-US").DateTimeFormat);
-			this.filename = filename;
+
+            // Yes, this will fail in the year 2100, find one of my grandchildren to complain to...
+            this.date = new DateTime (int.Parse (date.Substring (6, 2)) + 2000, int.Parse (date.Substring (0, 2)), int.Parse (date.Substring (3, 2)));
+			
+            this.filename = filename;
 		}
 		
 		public FileDefinition ()
