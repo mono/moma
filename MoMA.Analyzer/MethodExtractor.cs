@@ -26,7 +26,7 @@ namespace MoMA.Analyzer
 						continue;
 						
 					// We only want Public classes
-					if ((type.Attributes & TypeAttributes.Public) == 0 || (((type.Attributes & TypeAttributes.NestedPrivate) == TypeAttributes.NestedPrivate))) {
+					if (((type.Attributes & TypeAttributes.Public) == 0 && (type.Attributes & TypeAttributes.NestedPublic) == 0) || (((type.Attributes & TypeAttributes.NestedPrivate) == TypeAttributes.NestedPrivate)) || (((type.Attributes & TypeAttributes.NestedFamily) == TypeAttributes.NestedFamily))) {
 						FindPrivateNestedClasses (type);
 						continue;
 					}
