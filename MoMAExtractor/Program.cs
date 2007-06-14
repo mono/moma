@@ -14,7 +14,7 @@ namespace MoMAExtractor
 			// I'm just interested in getting the files needed for MoMA
 			// right now, this may only work on my machine  :)
 			
-			string mono_path = @"C:\Program Files\Mono-1.2\lib\mono\2.0";
+			string mono_path = @"C:\Program Files\Mono-1.2.4\lib\mono\2.0";
 			string ms_path = @"C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727";
 			string output_path = Path.GetDirectoryName (Application.ExecutablePath);
 			
@@ -84,7 +84,9 @@ namespace MoMAExtractor
 				string f = Path.GetFileName (filepath);
 
 				if ((f.Contains ("Accessibility") || f.Contains ("System") || f.Contains ("mscorlib") || f.Contains ("Microsoft")) && !(f.Contains ("_")) && !(f.Contains ("Thunk")) && !(f.Contains ("Wrapper")))
-					assemblies.Add (filepath);
+					if (!f.Contains ("Microsoft.Build.Conversion") && !f.Contains ("Microsoft.Build.VisualJSharp") && !f.Contains ("Microsoft.VisualBasic.Compatibility.Data") && !f.Contains ("Microsoft.VisualBasic.Compatibility") && !f.Contains ("Microsoft.VisualBasic.Vsa") && !f.Contains ("Microsoft.Vsa.Vb.CodeDOMProcessor"))
+						if (!f.Contains ("System.Data.SqlXml") && !f.Contains ("System.Deployment.dll") && !f.Contains ("System.DirectoryServices.Protocols") && !f.Contains ("System.Web.Mobile") && !f.Contains ("System.Web.RegularExpressions"))
+							assemblies.Add (filepath);
 			}
 			
 			return assemblies;

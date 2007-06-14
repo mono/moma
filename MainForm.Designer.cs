@@ -352,7 +352,7 @@ namespace MoMA
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size (72, 14);
 			this.label2.TabIndex = 32;
-			this.label2.Text = "Version 1.1.1";
+			this.label2.Text = "Version 1.2.4";
 			// 
 			// MonoVersionCombo
 			// 

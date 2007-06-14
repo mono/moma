@@ -370,7 +370,7 @@ namespace MoMA
 				}
 			}
 			catch (Exception ex) {
-				MessageBox.Show ("Result submission failed (Exception={0}).", ex.GetType ().ToString ());
+				MessageBox.Show (string.Format ("Result submission failed (Exception={0}).", ex.ToString ()));
 			}
 		}
 

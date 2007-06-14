@@ -9,36 +9,28 @@ namespace MoMA.Analyzer
 {
 	public class MethodExtractor
 	{
-		private static SortedList<string, string> privateclasses = new SortedList<string, string> ();
-		
 		// Parse the assemblies looking for various sticky points
 		// Leave any of the SortedList parameters null that you aren't interested in
 		public static void ExtractFromAssembly (string assembly, SortedList<string, Method> allMethods, SortedList<string, Method> throwsNotImplementedMethods, SortedList<string, Method> monoTodoMethods)
 		{
-			privateclasses.Clear ();
 			AssemblyDefinition ad = AssemblyFactory.GetAssembly (assembly);
-
+			
 			//Gets all types of the MainModule of the assembly
 			foreach (TypeDefinition type in ad.MainModule.Types) {
 				if (type.Name != "<Module>") {
-					// If this is a private nested class, skip it
-					if (privateclasses.ContainsKey (type.Module.Name + type.ToString ()))
+				
+					// Is the type part of the public API?
+					if (!IsTypeVisible (type))
 						continue;
 						
-					// We only want Public classes
-					if (((type.Attributes & TypeAttributes.Public) == 0 && (type.Attributes & TypeAttributes.NestedPublic) == 0) || (((type.Attributes & TypeAttributes.NestedPrivate) == TypeAttributes.NestedPrivate)) || (((type.Attributes & TypeAttributes.NestedFamily) == TypeAttributes.NestedFamily))) {
-						FindPrivateNestedClasses (type);
-						continue;
-					}
-
 					//Check for [MonoTODO]s on a Property, but not actually on the Getter/Setter
 					if (monoTodoMethods != null) {
 						foreach (PropertyDefinition property in type.Properties) {
 							foreach (CustomAttribute ca in property.CustomAttributes) {
-								if (ca.Constructor.DeclaringType.ToString () == "System.MonoTODOAttribute" || ca.Constructor.DeclaringType.ToString () == "System.MonoLimitationAttribute" || ca.Constructor.DeclaringType.ToString () == "System.MonoNotSupportedAttribute") {
-									if (property.GetMethod != null && ((property.GetMethod.Attributes & MethodAttributes.Family) == MethodAttributes.Family || (property.GetMethod.Attributes & MethodAttributes.Public) == MethodAttributes.Public))
+								if (IsReportableMonoTODO (ca.Constructor.DeclaringType.ToString ())) {
+									if (property.GetMethod != null && IsMethodVisible (property.GetMethod))
 										monoTodoMethods[property.GetMethod.ToString ()] = new Method (property.GetMethod.ToString (), ca.ConstructorParameters.Count > 0 ? ca.ConstructorParameters[0].ToString () : string.Empty);
-									if (property.SetMethod != null && ((property.SetMethod.Attributes & MethodAttributes.Family) == MethodAttributes.Family || (property.SetMethod.Attributes & MethodAttributes.Public) == MethodAttributes.Public))
+									if (property.SetMethod != null && IsMethodVisible (property.SetMethod))
 										monoTodoMethods[property.SetMethod.ToString ()] = new Method (property.SetMethod.ToString (), ca.ConstructorParameters.Count > 0 ? ca.ConstructorParameters[0].ToString () : string.Empty);
 								}
 							}
@@ -47,8 +39,7 @@ namespace MoMA.Analyzer
 					
 					//Gets all methods of the current type
 					foreach (MethodDefinition method in type.Methods) {
-						// We only want Public and Protected methods
-						if (!((method.Attributes & MethodAttributes.Family) == MethodAttributes.Family || (method.Attributes & MethodAttributes.Public) == MethodAttributes.Public))
+						if (!IsMethodVisible (method))
 							continue;
 							
 						// If adding all methods, add this method
@@ -58,21 +49,18 @@ namespace MoMA.Analyzer
 						// If adding MonoTODO methods, check this method
 						if (monoTodoMethods != null)
 							foreach (CustomAttribute ca in method.CustomAttributes)
-								if (ca.Constructor.DeclaringType.ToString () == "System.MonoTODOAttribute" || ca.Constructor.DeclaringType.ToString () == "System.MonoLimitationAttribute" || ca.Constructor.DeclaringType.ToString () == "System.MonoNotSupportedAttribute")
+								if (IsReportableMonoTODO (ca.Constructor.DeclaringType.ToString ()))
 									monoTodoMethods[method.ToString ()] = new Method (method.ToString (), ca.ConstructorParameters.Count > 0 ? ca.ConstructorParameters[0].ToString () : string.Empty);
 
 						// If adding methods that throw NotImplementedException, look for those
-						if (throwsNotImplementedMethods != null && method.Body != null)
-							foreach (Instruction i in method.Body.Instructions)
-								if (i.OpCode == OpCodes.Throw)
-									if (i.Previous.Operand != null && i.Previous.Operand.ToString ().StartsWith ("System.Void System.NotImplementedException"))
-										throwsNotImplementedMethods[method.ToString ()] = new Method (method.ToString ());
+						if (throwsNotImplementedMethods != null && ThrowsNotImplementedException (method))
+							throwsNotImplementedMethods[method.ToString ()] = new Method (method.ToString ());
 					}
 
 					//Gets all constructors of the current type
 					foreach (MethodDefinition method in type.Constructors) {
 						// We only want Public and Protected methods
-						if ((method.Attributes & MethodAttributes.Family) == 0 && (method.Attributes & MethodAttributes.Public) == 0)
+						if (!IsMethodVisible (method))
 							continue;
 
 						// If adding all methods, add this method
@@ -82,17 +70,13 @@ namespace MoMA.Analyzer
 						// If adding MonoTODO methods, check this method
 						if (monoTodoMethods != null)
 							foreach (CustomAttribute ca in method.CustomAttributes)
-								if (ca.Constructor.DeclaringType.ToString () == "System.MonoTODOAttribute" || ca.Constructor.DeclaringType.ToString () == "System.MonoLimitationAttribute" || ca.Constructor.DeclaringType.ToString () == "System.MonoNotSupportedAttribute")
+								if (IsReportableMonoTODO (ca.Constructor.DeclaringType.ToString ()))
 									monoTodoMethods[method.ToString ()] = new Method (method.ToString (), ca.ConstructorParameters.Count > 0 ? ca.ConstructorParameters[0].ToString () : string.Empty);
 
 						// If adding methods that throw NotImplementedException, look for those
-						if (throwsNotImplementedMethods != null && method.Body != null)
-							foreach (Instruction i in method.Body.Instructions)
-								if (i.OpCode == OpCodes.Throw)
-									if (i.Previous.Operand != null && i.Previous.Operand.ToString ().StartsWith ("System.Void System.NotImplementedException"))
-										throwsNotImplementedMethods[method.ToString ()] = new Method (method.ToString ());
+						if (throwsNotImplementedMethods != null && ThrowsNotImplementedException (method))
+							throwsNotImplementedMethods[method.ToString ()] = new Method (method.ToString ());
 					}
-
 				}
 			}
 		}
@@ -105,13 +89,58 @@ namespace MoMA.Analyzer
 					output[s] = new Method (s);
 		}
 		
-		private static void FindPrivateNestedClasses (TypeDefinition type)
+		// Is method part of the public API?  (Public or Protected)
+		private static bool IsMethodVisible (MethodDefinition method)
 		{
-			foreach (TypeDefinition t in type.NestedTypes) 
-			{
-				privateclasses.Add (t.Module.Name + t.ToString (), string.Empty);
-				FindPrivateNestedClasses (t);
-			}
+			if (!((method.Attributes & MethodAttributes.Family) == MethodAttributes.Family || (method.Attributes & MethodAttributes.Public) == MethodAttributes.Public))
+				return false;
+
+			return true;
+		}
+		
+		// Is type part of the public API?  (Public or Protected)
+		private static bool IsTypeVisible (TypeDefinition type)
+		{
+			if (((type.Attributes & TypeAttributes.Public) == 0 && (type.Attributes & TypeAttributes.NestedPublic) == 0) || (((type.Attributes & TypeAttributes.NestedPrivate) == TypeAttributes.NestedPrivate)) || (((type.Attributes & TypeAttributes.NestedFamily) == TypeAttributes.NestedFamily)))
+				return false;
+			
+			// Recurse to make sure all parents are visible
+			if (type.DeclaringType != null)
+				return IsTypeVisible (TypeReferenceToDefinition (type.DeclaringType));
+				
+			return true;
+		}
+		
+		private static TypeDefinition TypeReferenceToDefinition (TypeReference type)
+		{
+			return type.Module.Types[type.FullName];
+		}
+		
+		// Is this attribute a MonoTODO that we want to report in MoMA?
+		private static bool IsReportableMonoTODO (string attributeString)
+		{
+			if (attributeString.Equals ("System.MonoTODOAttribute"))
+				return true;
+
+			if (attributeString.Equals ("System.MonoLimitationAttribute"))
+				return true;
+
+			if (attributeString.Equals ("System.MonoNotSupportedAttribute"))
+				return true;
+		
+			return false;
+		}
+		
+		// Does the method throw a NotImplementedException?
+		private static bool ThrowsNotImplementedException (MethodDefinition method)
+		{
+			if (method.Body != null)
+				foreach (Instruction i in method.Body.Instructions)
+					if (i.OpCode == OpCodes.Throw)
+						if (i.Previous.Operand != null && i.Previous.Operand.ToString ().StartsWith ("System.Void System.NotImplementedException"))
+							return true;
+							
+			return false;
 		}
 	}
 }
