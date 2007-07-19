@@ -29,9 +29,9 @@ namespace MoMA.Analyzer
 							foreach (CustomAttribute ca in property.CustomAttributes) {
 								if (IsReportableMonoTODO (ca.Constructor.DeclaringType.ToString ())) {
 									if (property.GetMethod != null && IsMethodVisible (property.GetMethod))
-										monoTodoMethods[property.GetMethod.ToString ()] = new Method (property.GetMethod.ToString (), ca.ConstructorParameters.Count > 0 ? ca.ConstructorParameters[0].ToString () : string.Empty);
+										monoTodoMethods[property.GetMethod.ToString ()] = new Method (property.GetMethod.ToString (), ca.ConstructorParameters.Count > 0 ? ca.ConstructorParameters[0].ToString ().Replace ('\n', ' ') : string.Empty);
 									if (property.SetMethod != null && IsMethodVisible (property.SetMethod))
-										monoTodoMethods[property.SetMethod.ToString ()] = new Method (property.SetMethod.ToString (), ca.ConstructorParameters.Count > 0 ? ca.ConstructorParameters[0].ToString () : string.Empty);
+										monoTodoMethods[property.SetMethod.ToString ()] = new Method (property.SetMethod.ToString (), ca.ConstructorParameters.Count > 0 ? ca.ConstructorParameters[0].ToString ().Replace ('\n', ' ') : string.Empty);
 								}
 							}
 						}
@@ -50,7 +50,7 @@ namespace MoMA.Analyzer
 						if (monoTodoMethods != null)
 							foreach (CustomAttribute ca in method.CustomAttributes)
 								if (IsReportableMonoTODO (ca.Constructor.DeclaringType.ToString ()))
-									monoTodoMethods[method.ToString ()] = new Method (method.ToString (), ca.ConstructorParameters.Count > 0 ? ca.ConstructorParameters[0].ToString () : string.Empty);
+									monoTodoMethods[method.ToString ()] = new Method (method.ToString (), ca.ConstructorParameters.Count > 0 ? ca.ConstructorParameters[0].ToString ().Replace ('\n', ' ') : string.Empty);
 
 						// If adding methods that throw NotImplementedException, look for those
 						if (throwsNotImplementedMethods != null && ThrowsNotImplementedException (method))
@@ -71,7 +71,7 @@ namespace MoMA.Analyzer
 						if (monoTodoMethods != null)
 							foreach (CustomAttribute ca in method.CustomAttributes)
 								if (IsReportableMonoTODO (ca.Constructor.DeclaringType.ToString ()))
-									monoTodoMethods[method.ToString ()] = new Method (method.ToString (), ca.ConstructorParameters.Count > 0 ? ca.ConstructorParameters[0].ToString () : string.Empty);
+									monoTodoMethods[method.ToString ()] = new Method (method.ToString (), ca.ConstructorParameters.Count > 0 ? ca.ConstructorParameters[0].ToString ().Replace ('\n', ' ') : string.Empty);
 
 						// If adding methods that throw NotImplementedException, look for those
 						if (throwsNotImplementedMethods != null && ThrowsNotImplementedException (method))

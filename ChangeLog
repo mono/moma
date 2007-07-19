@@ -1,3 +1,7 @@
+07-19-2007  Jonathan Pobst  <monkey@jpobst.com>
+
+	* MethodExtractor.cs: Fix an issue Andreia found with multiline MonoTODO comments.
+
 06-14-2007  Jonathan Pobst  <monkey@jpobst.com>
 
 	* MainForm.cs: Fix error while displaying exceptions.
