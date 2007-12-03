@@ -62,7 +62,7 @@ namespace MoMA.Analyzer
 			return_type = raw_method.Substring (0, raw_method.IndexOf (" "));
 			
 			int colons = raw_method.IndexOf ("::");
-			int function_end = raw_method.IndexOf ("(");
+			int function_end = raw_method.IndexOf ("(", colons);
 
 			function_name = raw_method.Substring (colons + 2, function_end - colons - 2).Replace ("::", ".");
 			
