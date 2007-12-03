@@ -96,7 +96,7 @@ namespace MoMA
 				DownloadSpinner.Image = Image.FromFile (Path.Combine (image_directory, "spinner.gif"));
 			}
 			catch (Exception ex) {
-				MessageBox.Show ("There was an error loading resources for MoMA, please try downloading a new copy.\nError: {0}", ex.ToString ());
+				MessageBox.Show (string.Format ("There was an error loading resources for MoMA, please try downloading a new copy.\nError: {0}", ex.ToString ()));
 			}
 		}
 	}

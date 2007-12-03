@@ -429,7 +429,7 @@ namespace MoMA
 				failed_image = Image.FromFile (Path.Combine (image_directory, "dialog-warning.png"));
 			}
 			catch (Exception ex) {
-				MessageBox.Show ("There was an error loading resources for MoMA, please try downloading a new copy.\nError: {0}", ex.ToString ());
+				MessageBox.Show (string.Format ("There was an error loading resources for MoMA, please try downloading a new copy.\nError: {0}", ex.ToString ()));
 			}
 		}
 	}

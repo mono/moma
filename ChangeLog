@@ -1,5 +1,13 @@
 12-03-2007  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DefinitionDownloader.cs: Fix an error message.
+	* MainForm.cs: Fix an error message.
+	* MainForm.Designer.cs: Bump version to 1.2.6.
+	* Extractor/Program.cs: Hardcode the assemblies we are interested in to add
+	3.0/3.5 assemblies which are in different places.
+
+12-03-2007  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Method.cs: Fix a parser bug found in the 3.0/3.5 classes.
 
 08-02-2007  Jonathan Pobst  <monkey@jpobst.com>
