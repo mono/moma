@@ -20,6 +20,8 @@ namespace MoMA
 		
 		private Image success_image;
 		private Image failed_image;
+		private string report_filename;
+		private string submit_filename;
 		
 		public MainForm ()
 		{
@@ -36,6 +38,36 @@ namespace MoMA
 			SetupForm (WizardStep.Introduction);
 			SetupMonoVersion ();
 			aa = new AssemblyAnalyzer ();
+		}
+
+		public void AddAssembly (string path)
+		{
+			if (!ListContainsAssembly (Path.GetFileName (path))) {
+				ListViewItem lvi = new ListViewItem (Path.GetFileName (path));
+				lvi.Tag = path;
+
+				AssemblyListView.Items.Add (lvi);
+			}
+		}
+
+		public string ReportFileName {
+			get {
+				if (string.IsNullOrEmpty (report_filename))
+					report_filename = Path.Combine (GetDefaultReportFolder(), "output.html");
+
+				return report_filename;
+			}
+			set { report_filename = value; }
+		}
+
+		public string SubmitFileName {
+			get {
+				if (string.IsNullOrEmpty (submit_filename))
+					submit_filename = Path.Combine (GetDefaultReportFolder (), "submit.txt");
+
+				return submit_filename;
+			}
+			set { submit_filename = value; }
 		}
 
 		private void ResetForm ()
@@ -178,16 +210,9 @@ namespace MoMA
 			ofd.Multiselect = true;
 			ofd.Filter = "Assemblies (*.exe, *.dll)|*.exe; *.dll|All Files (*.*)|*.*";
 
-			if (ofd.ShowDialog () == DialogResult.OK) {
-				foreach (string s in ofd.FileNames) {
-					if (!ListContainsAssembly (System.IO.Path.GetFileName (s))) {
-						ListViewItem lvi = new ListViewItem (System.IO.Path.GetFileName (s));
-						lvi.Tag = s;
-
-						AssemblyListView.Items.Add (lvi);
-					}
-				}
-			}
+			if (ofd.ShowDialog () == DialogResult.OK)
+				foreach (string s in ofd.FileNames)
+					AddAssembly (s);
 		}
 
 		private bool ListContainsAssembly (string file)
@@ -209,7 +234,7 @@ namespace MoMA
 			}
 		}
 
-		private void AnalyzeAssemblies ()
+		public void AnalyzeAssemblies ()
 		{
 			// Keep total counts for all assemblies for summary screen
 			int monotodocount = 0;
@@ -234,12 +259,11 @@ namespace MoMA
 				aa.ScanAssemblyForPInvokes ((string)lvi.Tag);
 
 			// Start the results reports
-			if (!Directory.Exists (Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Reports")))
-				Directory.CreateDirectory (Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Reports"));
-
-			string output_path = Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Reports");
-			XhtmlTextWriter report = aa.BeginHtmlReport (new FileStream (Path.Combine (output_path, "output.html"), FileMode.Create));
-			StreamWriter submit_report = aa.BeginTextReport (new FileStream (Path.Combine (output_path, "submit.txt"), FileMode.Create));
+			EnsureOutputDirectory (this.ReportFileName);
+			EnsureOutputDirectory (this.SubmitFileName);
+			
+			XhtmlTextWriter report = aa.BeginHtmlReport (new FileStream (this.ReportFileName, FileMode.Create));
+			StreamWriter submit_report = aa.BeginTextReport (new FileStream (this.SubmitFileName, FileMode.Create));
 
 			// Scan user's assemblies for issues
 			foreach (ListViewItem lvi in AssemblyListView.Items) {
@@ -326,13 +350,11 @@ namespace MoMA
 
 		private void ResultsDetailLink_LinkClicked (object sender, LinkLabelLinkClickedEventArgs e)
 		{
-			string report_file = Path.Combine (Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Reports"), "output.html");
-
 			try {
-				System.Diagnostics.Process.Start (report_file);
+				System.Diagnostics.Process.Start (this.ReportFileName);
 			}
 			catch (Exception) {
-				MessageBox.Show (string.Format ("The detail report can be viewed here:\n{0}", report_file));
+				MessageBox.Show (string.Format("The detail report can be viewed here:\n{0}", this.ReportFileName));
 			}
 		}
 
@@ -415,7 +437,7 @@ namespace MoMA
 					SetupMonoVersion ();
 			}
 			else
-				MessageBox.Show (string.Format("You have the most recent version: {0}", fd.Version));
+				MessageBox.Show (string.Format ("You have the most recent version: {0}", fd.Version));
 		}
 		
 		private void LoadImages ()
@@ -431,6 +453,17 @@ namespace MoMA
 			catch (Exception ex) {
 				MessageBox.Show (string.Format ("There was an error loading resources for MoMA, please try downloading a new copy.\nError: {0}", ex.ToString ()));
 			}
+		}
+
+		private static void EnsureOutputDirectory (string path)
+		{
+			if (!Directory.Exists (Path.GetDirectoryName (path)))
+				Directory.CreateDirectory (Path.GetDirectoryName (path));
+		}
+
+		private static string GetDefaultReportFolder ()
+		{
+			return Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Reports");
 		}
 	}
 }
