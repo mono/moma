@@ -1,3 +1,14 @@
+01-22-2008  Jonathan Pobst  <monkey@jpobst.com>
+
+	* AssemblyAnalyzer.cs: Catch any exception returned by Cecil to we 
+	will gracefully ignore any dll Cecil cannot read.
+	[Fixes bug #355360]
+
+12-17-2007  Jonathan Pobst  <monkey@jpobst.com>
+
+	* Program.cs, MainForm.cs: Merge patch from Joseph Hill that allows
+	MoMA to be used without a GUI so it can be added to automated builds.
+
 12-03-2007  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DefinitionDownloader.cs: Fix an error message.

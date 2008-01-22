@@ -320,7 +320,7 @@ namespace MoMA.Analyzer
 				AssemblyFactory.GetAssembly (assembly);
 				return true;
 			}
-			catch (Mono.Cecil.Binary.ImageFormatException) {
+			catch (Exception) {
 				return false;
 			}
 		}
