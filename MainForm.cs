@@ -418,7 +418,11 @@ namespace MoMA
 		private void SetupMonoVersion ()
 		{
 			MonoVersionCombo.Items.Clear ();
-			
+
+			// Unix-y people may have downloaded definitions to their user folder
+			if (Environment.OSVersion.Platform == PlatformID.Unix)
+				foreach (FileDefinition fd in DefinitionHandler.FindAvailableVersions (Path.Combine (Path.GetDirectoryName (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData)), "Definitions")))
+					MonoVersionCombo.Items.Add (fd);
 			foreach (FileDefinition fd in DefinitionHandler.FindAvailableVersions (Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Definitions")))
 				MonoVersionCombo.Items.Add (fd);
 
@@ -463,7 +467,11 @@ namespace MoMA
 
 		private static string GetDefaultReportFolder ()
 		{
-			return Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Reports");
+			// Unix-y people generally can't write to where the executable is
+			if (Environment.OSVersion.Platform == PlatformID.Unix)
+				return Path.Combine (Path.GetDirectoryName (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData)), "Reports");
+			else
+				return Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Reports");
 		}
 	}
 }

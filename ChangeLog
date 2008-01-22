@@ -1,5 +1,12 @@
 01-22-2008  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DefinitionDownloader.cs: Write downloaded definitions to the AppData
+	dir on Linux.
+	* MainForm.cs: On Linux, look for downloaded definitions in the AppData
+	dir, and write the reports to the AppData dir.
+
+01-22-2008  Jonathan Pobst  <monkey@jpobst.com>
+
 	* AssemblyAnalyzer.cs: Catch any exception returned by Cecil to we 
 	will gracefully ignore any dll Cecil cannot read.
 	[Fixes bug #355360]

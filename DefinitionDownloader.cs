@@ -44,8 +44,14 @@ namespace MoMA
 			Application.DoEvents ();
 			
 			try {
-				string definition_directory = Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Definitions");
+				string definition_directory;
 				
+				// Unix-y people generally can't write to where the executable is, so move it to their home
+				if (Environment.OSVersion.Platform == PlatformID.Unix)
+					definition_directory = Path.Combine (Path.GetDirectoryName (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData)), "Definitions");
+				else
+					definition_directory = Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Definitions");
+
 				if (!Directory.Exists (definition_directory))
 					Directory.CreateDirectory (definition_directory);
 					
