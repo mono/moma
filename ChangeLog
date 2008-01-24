@@ -1,3 +1,7 @@
+01-24-2008  Jonathan Pobst  <monkey@jpobst.com>
+
+	* MainForm.Designer.cs: Set AutoScaleMode to None.
+
 01-22-2008  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DefinitionDownloader.cs: Write downloaded definitions to the AppData
