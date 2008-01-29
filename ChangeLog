@@ -1,5 +1,9 @@
 01-29-2008  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DefinitionDownloader.cs, MainForm.cs: Make that ~/home/xxx/.config/moma.
+
+01-29-2008  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DefinitionDownloader.cs, MainForm.cs: Delete a copy and paste error
 	that was placing linux files at ~/ instead of ~/home/xxx/.config.
 

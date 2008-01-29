@@ -417,7 +417,7 @@ namespace MoMA
 
 			// Unix-y people may have downloaded definitions to their user folder
 			if (Environment.OSVersion.Platform == PlatformID.Unix)
-				foreach (FileDefinition fd in DefinitionHandler.FindAvailableVersions (Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData), "Definitions")))
+				foreach (FileDefinition fd in DefinitionHandler.FindAvailableVersions (Path.Combine (Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData), "moma"), "Definitions")))
 					MonoVersionCombo.Items.Add (fd);
 			foreach (FileDefinition fd in DefinitionHandler.FindAvailableVersions (Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Definitions")))
 				MonoVersionCombo.Items.Add (fd);
@@ -465,7 +465,7 @@ namespace MoMA
 		{
 			// Unix-y people generally can't write to where the executable is
 			if (Environment.OSVersion.Platform == PlatformID.Unix)
-				return Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData), "Reports");
+				return Path.Combine (Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData), "moma"), "Reports");
 			else
 				return Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Reports");
 		}
