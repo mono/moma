@@ -1,5 +1,10 @@
 01-29-2008  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DefinitionDownloader.cs, MainForm.cs: Delete a copy and paste error
+	that was placing linux files at ~/ instead of ~/home/xxx/.config.
+
+01-29-2008  Jonathan Pobst  <monkey@jpobst.com>
+
 	* MainForm.cs: Use the correct report location for viewing and submitting
 	the submit report.
 

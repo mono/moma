@@ -48,7 +48,7 @@ namespace MoMA
 				
 				// Unix-y people generally can't write to where the executable is, so move it to their home
 				if (Environment.OSVersion.Platform == PlatformID.Unix)
-					definition_directory = Path.Combine (Path.GetDirectoryName (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData)), "Definitions");
+					definition_directory = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData), "Definitions");
 				else
 					definition_directory = Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Definitions");
 
