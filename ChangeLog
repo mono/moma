@@ -1,3 +1,8 @@
+01-29-2008  Jonathan Pobst  <monkey@jpobst.com>
+
+	* MainForm.cs: Use the correct report location for viewing and submitting
+	the submit report.
+
 01-24-2008  Jonathan Pobst  <monkey@jpobst.com>
 
 	* MainForm.Designer.cs: Set AutoScaleMode to None.

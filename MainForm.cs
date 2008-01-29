@@ -365,24 +365,20 @@ namespace MoMA
 
 		private void ViewReportButton_Click (object sender, EventArgs e)
 		{
-			string report_file = Path.Combine (Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Reports"), "submit.txt");
-			
 			try {	        
-				System.Diagnostics.Process.Start (report_file);	
+				System.Diagnostics.Process.Start (SubmitFileName);	
 			}
 			catch (Exception) {
-				MessageBox.Show (string.Format ("The report that will be submitted can be viewed here:\n{0}", report_file));
+				MessageBox.Show (string.Format ("The report that will be submitted can be viewed here:\n{0}", SubmitFileName));
 			}
 		}
 
 		private void SubmitReportButton_Click (object sender, EventArgs e)
 		{
 			SubmitReportButton.Enabled = false;
-			string output_path = Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Reports");
-			string file = Path.Combine (output_path, "submit.txt");
 
 			try {
-				using (StreamReader sr = new StreamReader (file)) {
+				using (StreamReader sr = new StreamReader (SubmitFileName)) {
 					string results = sr.ReadToEnd ();
 
 					if (AssemblyAnalyzer.SubmitResults (results, (MonoVersionCombo.Items[0] as FileDefinition).Version, OptionalNameBox.Text, OptionalEmailBox.Text, OptionalOrganizationBox.Text, OptionalHomePageBox.Text, OptionalCommentsBox.Text))
