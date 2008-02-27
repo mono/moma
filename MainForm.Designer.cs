@@ -122,13 +122,13 @@ namespace MoMA
 			// 
 			// StepLabel
 			// 
-			this.StepLabel.AutoSize = true;
 			this.StepLabel.Font = new System.Drawing.Font ("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.StepLabel.Location = new System.Drawing.Point (284, 429);
+			this.StepLabel.Location = new System.Drawing.Point (267, 429);
 			this.StepLabel.Name = "StepLabel";
-			this.StepLabel.Size = new System.Drawing.Size (60, 14);
+			this.StepLabel.Size = new System.Drawing.Size (101, 14);
 			this.StepLabel.TabIndex = 4;
 			this.StepLabel.Text = "Step 1 of 4";
+			this.StepLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// IntroductionLabel
 			// 
@@ -345,14 +345,13 @@ namespace MoMA
 			// 
 			// label2
 			// 
-			this.label2.AutoSize = true;
 			this.label2.BackColor = System.Drawing.Color.Transparent;
 			this.label2.Font = new System.Drawing.Font ("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.label2.Location = new System.Drawing.Point (9, 445);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size (72, 14);
+			this.label2.Size = new System.Drawing.Size (103, 14);
 			this.label2.TabIndex = 32;
-			this.label2.Text = "Version 1.2.6";
+			this.label2.Text = "Version 1.9";
 			// 
 			// MonoVersionCombo
 			// 

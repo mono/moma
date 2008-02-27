@@ -1,3 +1,7 @@
+02-27-2008  Jonathan Pobst  <monkey@jpobst.com>
+
+	* MainForm.Designer.cs: Bump version to 1.9.
+
 01-29-2008  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DefinitionDownloader.cs, MainForm.cs: Make that ~/home/xxx/.config/moma.
