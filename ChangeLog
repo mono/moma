@@ -1,5 +1,11 @@
 02-27-2008  Jonathan Pobst  <monkey@jpobst.com>
 
+	* MainForm.cs: If my local defs are newer than the webservices ones,
+	it was telling me I had the most recent ones, but using the name of
+	the webservice ones instead of the local ones.
+
+02-27-2008  Jonathan Pobst  <monkey@jpobst.com>
+
 	* MainForm.Designer.cs: Bump version to 1.9.
 
 01-29-2008  Jonathan Pobst  <monkey@jpobst.com>

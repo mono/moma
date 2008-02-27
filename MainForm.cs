@@ -437,7 +437,7 @@ namespace MoMA
 					SetupMonoVersion ();
 			}
 			else
-				MessageBox.Show (string.Format ("You have the most recent version: {0}", fd.Version));
+				MessageBox.Show (string.Format ("You have the most recent version: {0}", (MonoVersionCombo.Items[0] as FileDefinition).Version));
 		}
 		
 		private void LoadImages ()
