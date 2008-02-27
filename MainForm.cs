@@ -415,11 +415,17 @@ namespace MoMA
 		{
 			MonoVersionCombo.Items.Clear ();
 
+			List<FileDefinition> versions = new List<FileDefinition> ();
+			
 			// Unix-y people may have downloaded definitions to their user folder
 			if (Environment.OSVersion.Platform == PlatformID.Unix)
-				foreach (FileDefinition fd in DefinitionHandler.FindAvailableVersions (Path.Combine (Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData), "moma"), "Definitions")))
-					MonoVersionCombo.Items.Add (fd);
-			foreach (FileDefinition fd in DefinitionHandler.FindAvailableVersions (Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Definitions")))
+				versions.AddRange (DefinitionHandler.FindAvailableVersions (Path.Combine (Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData), "moma"), "Definitions")));
+				
+			versions.AddRange (DefinitionHandler.FindAvailableVersions (Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Definitions")));
+
+			versions.Sort ();
+			
+			foreach (FileDefinition fd in versions)
 				MonoVersionCombo.Items.Add (fd);
 
 			if (MonoVersionCombo.Items.Count > 0)
