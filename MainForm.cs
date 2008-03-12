@@ -262,7 +262,7 @@ namespace MoMA
 			EnsureOutputDirectory (this.ReportFileName);
 			EnsureOutputDirectory (this.SubmitFileName);
 			
-			XhtmlTextWriter report = aa.BeginHtmlReport (new FileStream (this.ReportFileName, FileMode.Create));
+			XhtmlTextWriter report = aa.BeginHtmlReport (new FileStream (this.ReportFileName, FileMode.Create), definitions.Version);
 			StreamWriter submit_report = aa.BeginTextReport (new FileStream (this.SubmitFileName, FileMode.Create));
 
 			// Scan user's assemblies for issues

@@ -151,7 +151,7 @@ namespace MoMA.Analyzer
 			}
 		}
 
-		public XhtmlTextWriter BeginHtmlReport (Stream output)
+		public XhtmlTextWriter BeginHtmlReport (Stream output, string definitions)
 		{
 			StreamWriter sw = new StreamWriter (output);
 			XhtmlTextWriter writer = new XhtmlTextWriter (sw);
@@ -173,9 +173,11 @@ namespace MoMA.Analyzer
 			writer.WriteFullBeginTag ("h1");
 			writer.WriteEncodedText ("MoMA Scan Results");
 			writer.WriteEndTag ("h1");
-			
+
 			writer.WriteBreak ();
-			writer.WriteEncodedText (String.Format ("Scan time: {0}" , DateTime.Now.ToString ()));
+			writer.WriteEncodedText (String.Format ("Scan time: {0}", DateTime.Now.ToString ()));
+			writer.WriteBreak ();
+			writer.WriteEncodedText (String.Format ("MoMA Definitions: {0}", definitions));
 			writer.WriteBreak ();
 			writer.WriteBreak ();
 			writer.Write ("For descriptions of issues and what to do, see <a href=\"http://www.mono-project.com/MoMA_-_Issue_Descriptions\">http://www.mono-project.com/MoMA_-_Issue_Descriptions</a>.");
