@@ -1,12 +1,35 @@
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:c
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+// Copyright (c) 2006-2008 Jonathan Pobst (monkey@jpobst.com)
+//
+// Author:
+//	Jonathan Pobst	monkey@jpobst.com
+//
+
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using System.Collections;
-using System.Web.UI;
 using System.IO;
+using System.Windows.Forms;
 using MoMA.Analyzer;
 
 namespace MoMA
@@ -15,13 +38,15 @@ namespace MoMA
 	{
 		private WizardStep current_step;
 		private AssemblyAnalyzer aa;
-		private string loaded_definitions;
 		private string image_directory;
 		
 		private Image success_image;
 		private Image failed_image;
 		private string report_filename;
 		private string submit_filename;
+		
+		private FileDefinition async_definitions;
+		private ListViewItem[] async_assemblies;
 		
 		public MainForm ()
 		{
@@ -30,26 +55,14 @@ namespace MoMA
 			image_directory = Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Resources");
 			LoadImages ();
 			
-			// Process.Start doesn't work on Unix, so we'll just hide the link
-			if (Environment.OSVersion.Platform == PlatformID.Unix)
-				ProjectLink.Visible = false;
-				
 			ResetForm ();
 			SetupForm (WizardStep.Introduction);
 			SetupMonoVersion ();
+
 			aa = new AssemblyAnalyzer ();
 		}
 
-		public void AddAssembly (string path)
-		{
-			if (!ListContainsAssembly (Path.GetFileName (path))) {
-				ListViewItem lvi = new ListViewItem (Path.GetFileName (path));
-				lvi.Tag = path;
-
-				AssemblyListView.Items.Add (lvi);
-			}
-		}
-
+		#region Properties
 		public string ReportFileName {
 			get {
 				if (string.IsNullOrEmpty (report_filename))
@@ -63,88 +76,75 @@ namespace MoMA
 		public string SubmitFileName {
 			get {
 				if (string.IsNullOrEmpty (submit_filename))
-					submit_filename = Path.Combine (GetDefaultReportFolder (), "submit.txt");
+					submit_filename = Path.Combine (GetDefaultReportFolder (), "submit.xml");
 
 				return submit_filename;
 			}
 			set { submit_filename = value; }
 		}
+		#endregion
 
+		#region Public Methods
+		public void AddAssembly (string path)
+		{
+			if (!ListContainsAssembly (Path.GetFileName (path))) {
+				ListViewItem lvi = new ListViewItem (Path.GetFileName (path));
+				lvi.Tag = path;
+
+				AssemblyListView.Items.Add (lvi);
+			}
+		}
+
+		public void AnalyzeNoGui ()
+		{
+			async_definitions = (FileDefinition)MonoVersionCombo.SelectedItem;
+			async_assemblies = (ListViewItem[])new ArrayList (AssemblyListView.Items).ToArray (typeof (ListViewItem));
+
+			ScanningCompletedEventArgs e = AnalyzeAssemblies ();
+		}
+		#endregion
+		
+		#region Private Methods
 		private void ResetForm ()
 		{
-			IntroductionLabel.Visible = false;
-
-			AssemblyAddButton.Visible = false;
-			AssemblyListView.Visible = false;
-			AssemblyRemoveButton.Visible = false;
-			AssemblyLabel.Visible = false;
-			AssemblyInstructions.Visible = false;
-			CheckUpdateLink.Visible = false;
-			MonoVersionCombo.Visible = false;
-			MonoVersionLabel.Visible = false;
-
-			AnalysisResultsLabel.Visible = false;
-			MonoTodoResultsImage.Visible = false;
-			MonoTodoResultsLabel.Visible = false;
-			NotImplementedResultsImage.Visible = false;
-			NotImplementedResultsLabel.Visible = false;
-			PInvokesResultsImage.Visible = false;
-			PInvokesResultsLabel.Visible = false;
-			MissingResultsImage.Visible = false;
-			MissingResultsLabel.Visible = false;
 			ResultsDetailLink.Visible = false;
-			ResultsText.Visible = false;
 
-			SubmitInstructions.Visible = false;
-			SubmitLabel.Visible = false;
-			SubmitReportButton.Visible = false;
-			ViewReportButton.Visible = false;
-			OptionalGroupBox.Visible = false;
+			Step1Panel.Visible = false;
+			Step2Panel.Visible = false;
+			Step3Panel.Visible = false;
+			Step4Panel.Visible = false;
+			Step5Panel.Visible = false;
 		}
 
 		private void SetupForm (WizardStep step)
 		{
 			switch (step) {
 				case WizardStep.Introduction:
-					IntroductionLabel.Visible = true;
+					Step1Panel.Visible = true;
 					break;
 				case WizardStep.ChooseAssemblies:
-					AssemblyAddButton.Visible = true;
-					AssemblyListView.Visible = true;
-					AssemblyRemoveButton.Visible = true;
-					AssemblyLabel.Visible = true;
-					AssemblyInstructions.Visible = true;
-					CheckUpdateLink.Visible = true;
-					MonoVersionCombo.Visible = true;
-					MonoVersionLabel.Visible = true;
+					Step2Panel.Visible = true;
 					break;
 				case WizardStep.ViewResults:
-					AnalysisResultsLabel.Visible = true;
-					MonoTodoResultsImage.Visible = true;
-					MonoTodoResultsLabel.Visible = true;
-					NotImplementedResultsImage.Visible = true;
-					NotImplementedResultsLabel.Visible = true;
-					PInvokesResultsImage.Visible = true;
-					PInvokesResultsLabel.Visible = true;
-					MissingResultsImage.Visible = true;
-					MissingResultsLabel.Visible = true;
-					ResultsText.Visible = true;
 					NextButton.Text = "Next";
+					
 					if (ResultsText.Text.StartsWith ("There"))
 						ResultsDetailLink.Visible = true;
+						
+					Step3Panel.Visible = true;
 					break;
 				case WizardStep.SubmitResults:
-					SubmitInstructions.Visible = true;
-					SubmitLabel.Visible = true;
-					SubmitReportButton.Visible = true;
-					ViewReportButton.Visible = true;
+					NextButton.Text = "Next";
+					Step4Panel.Visible = true;
+					DescriptionComboBox.Focus ();
+					break;
+				case WizardStep.WhatsNext:
 					NextButton.Text = "Close";
-					OptionalGroupBox.Visible = true;
-					OptionalNameBox.Focus ();
+					Step5Panel.Visible = true;
 					break;
 			}
 
-			StepLabel.Text = String.Format ("Step {0} of 4", (int)step);
+			StepLabel.Text = String.Format ("Step {0} of 5", (int)step);
 			current_step = step;
 		}
 
@@ -165,20 +165,59 @@ namespace MoMA
 						MessageBox.Show ("No definition files could be found.  Please try to download the latest definition file.");
 						return;
 					}
-					AnalyzeAssemblies ();
-					ResetForm ();
-					SetupForm (WizardStep.ViewResults);
-					break;
+					
+					ScanningLabel.Visible = true;
+					ScanningSpinner.Visible = true;
+					NextButton.Enabled = false;
+					BackButton.Enabled = false;
+					
+					async_definitions = (FileDefinition)MonoVersionCombo.SelectedItem;
+					async_assemblies = (ListViewItem[])new ArrayList (AssemblyListView.Items).ToArray (typeof (ListViewItem));
+					
+					BackgroundWorker bw = new BackgroundWorker();
+					bw.DoWork += new DoWorkEventHandler (bw_DoWork);
+					bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler (bw_RunWorkerCompleted);
+					bw.RunWorkerAsync ();
+					
+					return;
 				case WizardStep.ViewResults:
 					ResetForm ();
 					SetupForm (WizardStep.SubmitResults);
 					break;
 				case WizardStep.SubmitResults:
+					ResetForm ();
+					SetupForm (WizardStep.WhatsNext);
+					break;
+				case WizardStep.WhatsNext:
 					Application.Exit ();
 					break;
 			}
 
 			BackButton.Enabled = true;
+		}
+
+		private void bw_RunWorkerCompleted (object sender, RunWorkerCompletedEventArgs e)
+		{
+			ScanningCompletedEventArgs ar = (ScanningCompletedEventArgs)e.Result;
+			
+			// Update the summary screen
+			UpdateResultsSummary (ar.MonoTodoTotal, ar.NotImplementedExceptionTotal, ar.PInvokeTotal, ar.MissingMethodTotal);
+
+			// Enable the report submission button
+			SubmitReportButton.Enabled = true;
+
+			ScanningLabel.Visible = false;
+			ScanningSpinner.Visible = false;
+			NextButton.Enabled = true;
+			BackButton.Enabled = true;
+			
+			ResetForm ();
+			SetupForm (WizardStep.ViewResults);
+		}
+		
+		private void bw_DoWork (object sender, DoWorkEventArgs e)
+		{
+			e.Result = AnalyzeAssemblies ();
 		}
 
 		private void BackButton_Click (object sender, EventArgs e)
@@ -200,6 +239,10 @@ namespace MoMA
 				case WizardStep.SubmitResults:
 					ResetForm ();
 					SetupForm (WizardStep.ViewResults);
+					break;
+				case WizardStep.WhatsNext:
+					ResetForm ();
+					SetupForm (WizardStep.SubmitResults);
 					break;
 			}
 		}
@@ -234,72 +277,28 @@ namespace MoMA
 			}
 		}
 
-		public void AnalyzeAssemblies ()
+		private ScanningCompletedEventArgs AnalyzeAssemblies ()
 		{
-			// Keep total counts for all assemblies for summary screen
-			int monotodocount = 0;
-			int notimplementedcount = 0;
-			int pinvokecount = 0;
-			int missingcount = 0;
-
-			string todo_defs = Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "monotodo.txt");
-			string nie_defs = Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "exception.txt");
-			string missing_defs = Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "missing.txt");
-
-			// Load the definition files
-			FileDefinition definitions = (FileDefinition)MonoVersionCombo.SelectedItem;
-
-			if (definitions.FileName != loaded_definitions) {
-				aa.LoadDefinitions (definitions.FileName);
-				loaded_definitions = definitions.FileName;
-			}
-
-			// Scan user's assemblies for P/Invokes
-			foreach (ListViewItem lvi in AssemblyListView.Items)
-				aa.ScanAssemblyForPInvokes ((string)lvi.Tag);
-
-			// Start the results reports
-			EnsureOutputDirectory (this.ReportFileName);
-			EnsureOutputDirectory (this.SubmitFileName);
+			// Make sure the images, css, and js for our html repor are there
+			EnsureReportMedia (Path.GetDirectoryName (this.ReportFileName));
 			
-			XhtmlTextWriter report = aa.BeginHtmlReport (new FileStream (this.ReportFileName, FileMode.Create), definitions.Version);
-			StreamWriter submit_report = aa.BeginTextReport (new FileStream (this.SubmitFileName, FileMode.Create));
-
-			// Scan user's assemblies for issues
-			foreach (ListViewItem lvi in AssemblyListView.Items) {
-				aa.AnalyzeAssembly ((string)lvi.Tag);
-
-				report.WriteFullBeginTag ("h2");
-				report.WriteEncodedText (Path.GetFileName ((string)lvi.Tag));
-				report.WriteEndTag ("h2");
-
-				aa.AddResultsToHtmlReport (report);
-				aa.AddResultsToTextReport (submit_report);
-
-				monotodocount += aa.MonoTodoResults.Count;
-				notimplementedcount += aa.NotImplementedExceptionResults.Count;
-				pinvokecount += aa.PInvokeResults.Count;
-				missingcount += aa.MissingMethodResults.Count;
-
-				aa.MissingMethodResults.Clear ();
-				aa.MonoTodoResults.Clear ();
-				aa.NotImplementedExceptionResults.Clear ();
-				aa.PInvokeResults.Clear ();
-			}
-
-			// Finish up the reports
-			aa.FinishHtmlReport (report);
+			// Setup the reports
+			aa.WriteHtmlReport = true;
+			aa.HtmlReportPath = this.ReportFileName;
 			
-			if (monotodocount + notimplementedcount + pinvokecount + missingcount == 0)
-				submit_report.WriteLine ("No Issues Found!");
+			aa.WriteXmlReport = true;
+			aa.XmlReportPath = this.SubmitFileName;
+			
+			// Setup the AssemblyAnalyzer
+			aa.Definitions = async_definitions;
+			aa.Assemblies.Clear ();
+			
+			// Add user's assemblies
+			foreach (ListViewItem lvi in async_assemblies)
+				aa.Assemblies.Add ((string)lvi.Tag);
 				
-			aa.FinishTextReport (submit_report);
-
-			// Update the summary screen
-			UpdateResultsSummary (monotodocount, notimplementedcount, pinvokecount, missingcount);
-
-			// Enable the report submission button
-			SubmitReportButton.Enabled = true;
+			// Go!
+			return aa.Analyze ();
 		}
 
 		private void UpdateResultsSummary (int monotodocount, int notimplementedcount, int pinvokecount, int missingcount)
@@ -354,7 +353,7 @@ namespace MoMA
 				System.Diagnostics.Process.Start (this.ReportFileName);
 			}
 			catch (Exception) {
-				MessageBox.Show (string.Format("The detail report can be viewed here:\n{0}", this.ReportFileName));
+				MessageBox.Show (string.Format ("The detail report can be viewed here:\n{0}", this.ReportFileName));
 			}
 		}
 
@@ -363,29 +362,15 @@ namespace MoMA
 			System.Diagnostics.Process.Start ("http://www.mono-project.com/");
 		}
 
-		private void ViewReportButton_Click (object sender, EventArgs e)
-		{
-			try {	        
-				System.Diagnostics.Process.Start (SubmitFileName);	
-			}
-			catch (Exception) {
-				MessageBox.Show (string.Format ("The report that will be submitted can be viewed here:\n{0}", SubmitFileName));
-			}
-		}
-
 		private void SubmitReportButton_Click (object sender, EventArgs e)
 		{
 			SubmitReportButton.Enabled = false;
 
 			try {
-				using (StreamReader sr = new StreamReader (SubmitFileName)) {
-					string results = sr.ReadToEnd ();
-
-					if (AssemblyAnalyzer.SubmitResults (results, (MonoVersionCombo.Items[0] as FileDefinition).Version, OptionalNameBox.Text, OptionalEmailBox.Text, OptionalOrganizationBox.Text, OptionalHomePageBox.Text, OptionalCommentsBox.Text))
-						MessageBox.Show ("Results successfully submitted.  Thanks!");
-					else
-						MessageBox.Show ("Result submission failed.  Please try again later.");
-				}
+				if (aa.SubmitResults (OptionalNameBox.Text, OptionalEmailBox.Text, OptionalOrganizationBox.Text, OptionalHomePageBox.Text, OptionalCommentsBox.Text, DescriptionComboBox.Text))
+					MessageBox.Show ("Results successfully submitted.  Thanks!");
+				else
+					MessageBox.Show ("Result submission failed.  Please try again later.");
 			}
 			catch (Exception ex) {
 				MessageBox.Show (string.Format ("Result submission failed (Exception={0}).", ex.ToString ()));
@@ -450,21 +435,91 @@ namespace MoMA
 		{
 			try {
 				this.BackgroundImage = Image.FromFile (Path.Combine (image_directory, "monoback.png"));
-				pictureBox1.Image = Image.FromFile (Path.Combine (image_directory, "monkey.png"));
+				DirectoryAddButton.Image = Image.FromFile (Path.Combine (image_directory, "list-directory.png"));
 				AssemblyAddButton.Image = Image.FromFile (Path.Combine (image_directory, "list-add.png"));
 				AssemblyRemoveButton.Image = Image.FromFile (Path.Combine (image_directory, "list-remove.png"));
 				success_image = Image.FromFile (Path.Combine (image_directory, "button_ok.png"));
 				failed_image = Image.FromFile (Path.Combine (image_directory, "dialog-warning.png"));
+				ScanningSpinner.Image = Image.FromFile (Path.Combine (image_directory, "spinner.gif"));
 			}
 			catch (Exception ex) {
 				MessageBox.Show (string.Format ("There was an error loading resources for MoMA, please try downloading a new copy.\nError: {0}", ex.ToString ()));
 			}
 		}
 
+		private void DirectoryAddButton_Click (object sender, EventArgs e)
+		{
+			FolderBrowserDialog fbd = new FolderBrowserDialog ();
+			fbd.Description = "Choose the directory that contains the assemblies to scan.";
+			fbd.ShowNewFolderButton = false;
+			
+			if (fbd.ShowDialog () != DialogResult.OK)
+				return;
+
+			AssemblyListView.BeginUpdate ();
+			
+			ScanForAssemblies (fbd.SelectedPath);
+			
+			AssemblyListView.EndUpdate ();
+		}
+		
+		private void ScanForAssemblies (string path)
+		{
+			foreach (string file in Directory.GetFiles (path, "*.dll"))
+				AddAssembly (file);
+			foreach (string file in Directory.GetFiles (path, "*.exe"))
+				AddAssembly (file);
+				
+			foreach (string directory in Directory.GetDirectories (path))
+				ScanForAssemblies (directory);
+		}
+
+		private void DownloadMonoButton_Click (object sender, EventArgs e)
+		{
+			System.Diagnostics.Process.Start ("http://www.go-mono.com/mono-downloads/download.html");
+		}
+
+		private void DownloadMonoDevelopButton_Click (object sender, EventArgs e)
+		{
+			System.Diagnostics.Process.Start ("http://www.monodevelop.com/Main_Page");
+		}
+
+		private void GettingStartedButton_Click (object sender, EventArgs e)
+		{
+			System.Diagnostics.Process.Start ("http://www.mono-project.com/Start");
+		}
+		#endregion
+
+		#region Static Methods
 		private static void EnsureOutputDirectory (string path)
 		{
 			if (!Directory.Exists (Path.GetDirectoryName (path)))
 				Directory.CreateDirectory (Path.GetDirectoryName (path));
+		}
+
+		private static void EnsureReportMedia (string reports_path)
+		{
+			try {
+				string media_path = Path.Combine (reports_path, "Media");
+				string source_path = Path.Combine (Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Reports"), "Media");
+
+				if (!Directory.Exists (media_path))
+					Directory.CreateDirectory (media_path);
+
+				if (!File.Exists (Path.Combine (media_path, "moma.css")))
+					File.Copy (Path.Combine (source_path, "moma.css"), Path.Combine (media_path, "moma.css"));
+				if (!File.Exists (Path.Combine (media_path, "moma.js")))
+					File.Copy (Path.Combine (source_path, "moma.js"), Path.Combine (media_path, "moma.js"));
+				if (!File.Exists (Path.Combine (media_path, "fail.png")))
+					File.Copy (Path.Combine (source_path, "fail.png"), Path.Combine (media_path, "fail.png"));
+				if (!File.Exists (Path.Combine (media_path, "pass.png")))
+					File.Copy (Path.Combine (source_path, "pass.png"), Path.Combine (media_path, "pass.png"));
+				if (!File.Exists (Path.Combine (media_path, "plus.png")))
+					File.Copy (Path.Combine (source_path, "plus.png"), Path.Combine (media_path, "plus.png"));
+				if (!File.Exists (Path.Combine (media_path, "minus.png")))
+					File.Copy (Path.Combine (source_path, "minus.png"), Path.Combine (media_path, "minus.png"));
+			} catch {
+			}
 		}
 
 		private static string GetDefaultReportFolder ()
@@ -475,5 +530,6 @@ namespace MoMA
 			else
 				return Path.Combine (Path.GetDirectoryName (Application.ExecutablePath), "Reports");
 		}
+		#endregion
 	}
 }

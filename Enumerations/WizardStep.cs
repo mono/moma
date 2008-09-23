@@ -23,57 +23,14 @@
 //	Jonathan Pobst	monkey@jpobst.com
 //
 
-using System;
-using System.Windows.Forms;
-
 namespace MoMA
 {
-	static class Program
+	public enum WizardStep
 	{
-		/// <summary>
-		/// The main entry point for the application.
-		/// </summary>
-		[STAThread]
-		static int Main (string[] args)
-		{
-			Application.EnableVisualStyles ();
-			Application.SetCompatibleTextRenderingDefault (false);
-			MainForm form = new MainForm ();
-
-			bool nogui = false;
-
-			for (int i = 0; i < args.Length; i++) {
-				string arg = args[i];
-				string nextArg = (i + 1 < args.Length) ? args[i + 1] : null;
-
-				switch (arg.ToLower ()) {
-					case "--nogui":
-					case "-nogui":
-						nogui = true;
-						break;
-					case "--out":
-					case "-out":
-						// if !full path, use report dir
-						form.ReportFileName = nextArg;
-						i++;
-						break;
-					default:
-						if (arg.StartsWith ("-")) {
-							Console.WriteLine ("Unknown argument: {0}", arg);
-							return 1;
-						}
-						
-						form.AddAssembly (arg);
-						break;
-				}
-			}
-
-			if (!nogui)
-				Application.Run (form);
-			else
-				form.AnalyzeNoGui ();
-
-			return 0;
-		}
+		Introduction = 1,
+		ChooseAssemblies = 2,
+		ViewResults = 3,
+		SubmitResults = 4,
+		WhatsNext = 5
 	}
 }

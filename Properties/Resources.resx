@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,18 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="IntroductionLabel.Text" xml:space="preserve">
-    <value>The Mono Migration Analyzer (MoMA) tool helps you identify issues you may have when porting your .Net application to Mono.  It helps pinpoint platform specific calls (P/Invoke) and areas that are not yet supported by the Mono project.
-
-While MoMA can help show potential issues, there are many complex factors that cannot be covered by a simple tool.  MoMA may fail to point out areas that will cause problems, and may point out areas which will not actually be an issue.
-
-Use the results provided as a guide to get you started on porting your application, but remember the true test is actually running your application on Mono.
-
-Good luck!</value>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="mdicon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\mdicon.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="SubmitInstructions.Text" xml:space="preserve">
-    <value>Want to help out the Mono project?  Please submit your results to the Mono team so they can prioritize their efforts based on what functionality people need most.  
-
-The following report has been prepared.  It doesn't contain any information about your assemblies, just which incomplete methods it calls in Mono and which P/Invokes it uses.  (You can view the report before sending as well.)</value>
+  <data name="start" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\start.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="monoicon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\monoicon.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>
