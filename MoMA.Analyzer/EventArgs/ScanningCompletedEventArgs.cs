@@ -1,4 +1,4 @@
-// Permission is hereby granted, free of charge, to any person obtaining
+﻿// Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
 // without limitation the rights to use, copy, modify, merge, publish,
@@ -23,14 +23,47 @@
 //	Jonathan Pobst	monkey@jpobst.com
 //
 
+using System;
+
 namespace MoMA.Analyzer
 {
-	class NotImplementedExceptionError : BaseError
+	public class ScanningCompletedEventArgs : EventArgs
 	{
-		public NotImplementedExceptionError (Method caller, Method callee)
+		private int assemblies_scanned;
+		private int miss_total;
+		private int niex_total;
+		private int pinv_total;
+		private int todo_total;
+
+		public ScanningCompletedEventArgs (int assem, int todo, int niex, int miss, int pinv)
 		{
-			this.caller = caller;
-			this.callee = callee;
+			assemblies_scanned = assem;
+			miss_total = miss;
+			niex_total = niex;
+			pinv_total = pinv;
+			todo_total = todo;
 		}
+
+		#region Properties
+		public int AssembliesScanned {
+			get { return assemblies_scanned; }
+		}
+
+		public int MissingMethodTotal {
+			get { return miss_total; }
+		}
+
+		public int NotImplementedExceptionTotal {
+			get { return niex_total; }
+		}
+
+		public int PInvokeTotal {
+			get { return pinv_total; }
+		}
+
+		public int MonoTodoTotal {
+			get { return todo_total; }
+		}
+		#endregion
 	}
 }

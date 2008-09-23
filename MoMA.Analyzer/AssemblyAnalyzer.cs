@@ -1,15 +1,41 @@
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:c
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+// Copyright (c) 2006-2008 Jonathan Pobst (monkey@jpobst.com)
+//
+// Author:
+//	Jonathan Pobst	monkey@jpobst.com
+//
+
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
+using System.Windows.Forms;
+using System.Xml;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-using System.Web.UI;
 
 namespace MoMA.Analyzer
 {
 	public class AssemblyAnalyzer
 	{
+		#region Private Variables
 		private CheckMonoTodo mono_todo;
 		private BaseChecker not_implemented;
 		private BaseChecker missing;
@@ -19,86 +45,220 @@ namespace MoMA.Analyzer
 		private List<BaseError> not_implemented_results;
 		private List<BaseError> missing_results;
 		private List<BaseError> pinvoke_results;
+		
+		private int todo_total;
+		private int niex_total;
+		private int miss_total;
+		private int pinv_total;
+		
+		private string assembly_name;
+		private string assembly_runtime;
+		private Version assembly_version;
 
-		public List<BaseError> MonoTodoResults
-		{
-			get { return this.mono_todo_results; }
-		}
-
-		public List<BaseError> NotImplementedExceptionResults
-		{
-			get { return this.not_implemented_results; }
-		}
-
-		public List<BaseError> MissingMethodResults
-		{
-			get { return this.missing_results; }
-		}
-
-		public List<BaseError> PInvokeResults
-		{
-			get { return this.pinvoke_results; }
-		}
-
+		private FileDefinition definitions;
+		private List<string> assemblies;
+		
+		private string html_report_path;
+		private string xml_report_path;
+		private bool write_html_report;
+		private bool write_xml_report;
+		
+		private HtmlReport r;
+		private XmlReport xr;
+		#endregion
+		
+		#region Constructor
 		public AssemblyAnalyzer ()
 		{
+			assemblies = new List<string> ();
+
 			mono_todo_results = new List<BaseError> ();
 			not_implemented_results = new List<BaseError> ();
 			missing_results = new List<BaseError> ();
 			pinvoke_results = new List<BaseError> ();
 		}
+		#endregion
 
-		public void LoadDefinitions (string definitionBundlePath)
-		{
-			Stream mt;
-			Stream ni;
-			Stream mi;
-
-			DefinitionHandler.GetDefinitionStreamsFromBundle (definitionBundlePath, out mt, out ni, out mi);
-
-			LoadDefinitions (mt, ni, mi);
-
-			mt.Close ();
-			ni.Close ();
-			mi.Close ();	
+		#region Properties
+		public FileDefinition Definitions {
+			get { return definitions; }
+			set { 
+				if (definitions != value) {
+					definitions = value;
+				
+					LoadDefinitions (definitions.FileName);
+				}
+			 }
 		}
 		
-		public void LoadDefinitions (string monoTodoDefinitions, string notImplementedDefinitions, string missingDefinitions)
-		{
-			Stream mt = new FileStream (monoTodoDefinitions, FileMode.Open);
-			Stream ni = new FileStream (notImplementedDefinitions, FileMode.Open);
-			Stream mi = new FileStream (missingDefinitions, FileMode.Open);
-
-			LoadDefinitions (mt, ni, mi);
-
-			mt.Close ();
-			ni.Close ();
-			mi.Close ();
+		public List<string> Assemblies {
+			get { return assemblies; }
+		}
+		
+		public string HtmlReportPath {
+			get { return html_report_path; }
+			set { html_report_path = value; }
+		}
+		
+		public string XmlReportPath {
+			get { return xml_report_path; }
+			set { xml_report_path = value; }
+		}
+		
+		public bool WriteHtmlReport {
+			get { return write_html_report; }
+			set { write_html_report = value; }
+		}
+		
+		public bool WriteXmlReport {
+			get { return write_xml_report; }
+			set { write_xml_report = value; }
+		}
+		
+		public string AssemblyName {
+			get { return assembly_name; }
 		}
 
-		public void LoadDefinitions (Stream monoTodoDefinitions, Stream notImplementedDefinitions, Stream missingDefinitions)
-		{
-			if (monoTodoDefinitions != null)
-				mono_todo = new CheckMonoTodo (monoTodoDefinitions);
-
-			if (notImplementedDefinitions != null)
-				not_implemented = new BaseChecker (notImplementedDefinitions);
-
-			if (missingDefinitions != null)
-				missing = new BaseChecker (missingDefinitions);
+		public string AssemblyRuntime {
+			get { return assembly_runtime; }
+			set {
+				switch (value) {
+					case "NET_1_0":
+						assembly_runtime = "1.0";
+						break;
+					case "NET_1_1":
+						assembly_runtime = "1.1";
+						break;
+					case "NET_2_0":
+						assembly_runtime = "2.0";
+						break;
+					default:
+						assembly_runtime = value;
+						break;
+				}
+			}
+		}
+		
+		public Version AssemblyVersion {
+			get { return assembly_version; }
+		}
+		
+		public List<BaseError> MonoTodoResults {
+			get { return this.mono_todo_results; }
 		}
 
-		public void ScanAssemblyForPInvokes (string assembly)
-		{
-			if (pinvoke == null)
-				pinvoke = new CheckPInvokes ();
-
-			pinvoke.FindPInvokesInAssembly (assembly);
+		public List<BaseError> NotImplementedExceptionResults {
+			get { return this.not_implemented_results; }
 		}
 
-		public void AnalyzeAssembly (string assembly)
+		public List<BaseError> MissingMethodResults {
+			get { return this.missing_results; }
+		}
+
+		public List<BaseError> PInvokeResults {
+			get { return this.pinvoke_results; }
+		}
+
+		public int TotalIssues {
+			get { return mono_todo_results.Count + not_implemented_results.Count + missing_results.Count + pinvoke_results.Count; }
+		}
+		#endregion
+		
+		#region Public Methods
+		public ScanningCompletedEventArgs Analyze ()
+		{
+			if (write_html_report && string.IsNullOrEmpty (html_report_path))
+				throw new InvalidOperationException ("WriteHtmlReport is true but HtmlReportPath is not set.");
+			if (write_xml_report && string.IsNullOrEmpty (xml_report_path))
+				throw new InvalidOperationException ("WriteXmlReport is true but XmlReportPath is not set.");
+			
+			// Reset our totals count
+			todo_total = 0;
+			niex_total = 0;
+			miss_total = 0;
+			pinv_total = 0;
+
+			BeginReports ();
+
+			// We have to do this first, so we can find methods that
+			// call pinvoke methods in the next step.
+			foreach (string assem in assemblies)
+				ScanAssemblyForPInvokes (assem);
+			
+			// Scan each assembly for issues, raise event with results
+			foreach (string assem in assemblies) {
+				AnalyzeAssembly (assem);
+				
+				todo_total += mono_todo_results.Count;
+				niex_total += not_implemented_results.Count;
+				miss_total += missing_results.Count;
+				pinv_total += pinvoke_results.Count;
+				
+				AssemblyScannedEventArgs asea = new AssemblyScannedEventArgs (assem, AssemblyRuntime, assembly_version, mono_todo_results, not_implemented_results, missing_results, pinvoke_results);
+				OnAssemblyScanned (asea);
+				AddAssemblyToReport (asea);
+				
+				mono_todo_results.Clear ();
+				not_implemented_results.Clear ();
+				missing_results.Clear ();
+				pinvoke_results.Clear ();
+			}
+			
+			// All done!
+			ScanningCompletedEventArgs scea = new ScanningCompletedEventArgs (assemblies.Count, todo_total, niex_total, miss_total, pinv_total);
+			OnScanningCompleted (scea);
+			FinishReports (scea);
+			
+			return scea;
+		}
+
+		public static bool IsValidAssembly (string assembly)
+		{
+			try {
+				AssemblyFactory.GetAssembly (assembly);
+				return true;
+			} catch {
+				return false;
+			}
+		}
+
+		// returns true if the results were successfully submitted, false if they weren't
+		// however you must catch Exceptions for things like network failure, etc.
+		public bool SubmitResults (string name, string email, string organization, string homepage, string comments, string apptype)
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.Load (xml_report_path);
+
+			SetXmlMetadataValue (doc, "name", name);
+			SetXmlMetadataValue (doc, "email", email);
+			SetXmlMetadataValue (doc, "homepage", homepage);
+			SetXmlMetadataValue (doc, "organization", organization);
+			SetXmlMetadataValue (doc, "comments", comments);
+
+			SetXmlMetadataValue (doc, "apptype", apptype);
+
+			MoMAWebService.MoMASubmit ws = new MoMAWebService.MoMASubmit ();
+			return ws.SubmitResults (doc.OuterXml);
+		}
+		#endregion
+
+		#region Private Methods
+		private void AddAssemblyToReport (AssemblyScannedEventArgs e)
+		{
+			if (write_html_report)
+				r.WriteAssembly (e);
+						
+			if (write_xml_report)
+				xr.WriteAssembly (e);
+		}
+		
+		private void AnalyzeAssembly (string assembly)
 		{
 			AssemblyDefinition ad = AssemblyFactory.GetAssembly (assembly);
+
+			assembly_version = ad.Name.Version;
+			AssemblyRuntime = ad.Runtime.ToString ();
+			assembly_name = Path.GetFileName (assembly);
 
 			foreach (TypeDefinition type in ad.MainModule.Types) {
 				if (type.Name != "<Module>") {
@@ -116,7 +276,7 @@ namespace MoMA.Analyzer
 										not_implemented_results.Add (new NotImplementedExceptionError (new Method (method.ToString ()), match));
 
 									if (pinvoke.Matches (i.Operand.ToString (), out match))
-										pinvoke_results.Add (new PInvokeError (new Method (method.ToString ()), match));
+										pinvoke_results.Add (new PInvokeError (new Method (method.ToString (), method), match));
 
 									if (missing.Matches (i.Operand.ToString (), out match))
 										missing_results.Add (new MissingMethodError (new Method (method.ToString ()), match));
@@ -150,205 +310,94 @@ namespace MoMA.Analyzer
 				}
 			}
 		}
-
-		public XhtmlTextWriter BeginHtmlReport (Stream output, string definitions)
+	
+		private void BeginReports ()
 		{
-			StreamWriter sw = new StreamWriter (output);
-			XhtmlTextWriter writer = new XhtmlTextWriter (sw);
+			if (write_html_report) {
+				EnsureOutputDirectory (html_report_path);
 
-			writer.WriteBeginTag ("html");
-			writer.WriteAttribute ("xmlns", "http://www.w3.org/1999/xhtml");
-			writer.Write (HtmlTextWriter.TagRightChar);
-			writer.WriteFullBeginTag ("head");
-
-			writer.WriteFullBeginTag ("title");
-			writer.WriteEncodedText ("MoMa Report");
-			writer.WriteEndTag ("title");
-
-			WriteCss (writer);
-
-			writer.WriteEndTag ("head");
-			writer.WriteFullBeginTag ("body");
-
-			writer.WriteFullBeginTag ("h1");
-			writer.WriteEncodedText ("MoMA Scan Results");
-			writer.WriteEndTag ("h1");
-
-			writer.WriteBreak ();
-			writer.WriteEncodedText (String.Format ("Scan time: {0}", DateTime.Now.ToString ()));
-			writer.WriteBreak ();
-			writer.WriteEncodedText (String.Format ("MoMA Definitions: {0}", definitions));
-			writer.WriteBreak ();
-			writer.WriteBreak ();
-			writer.Write ("For descriptions of issues and what to do, see <a href=\"http://www.mono-project.com/MoMA_-_Issue_Descriptions\">http://www.mono-project.com/MoMA_-_Issue_Descriptions</a>.");
-			writer.WriteBreak ();
-			writer.WriteBreak ();
-			
-			return writer;
-		}
-
-		public StreamWriter BeginTextReport (Stream output)
-		{
-			return new StreamWriter (output);
-		}
-
-		public void AddResultsToHtmlReport (XhtmlTextWriter writer)
-		{
-			if (missing_results.Count + pinvoke_results.Count + not_implemented_results.Count + mono_todo_results.Count == 0) {
-				writer.WriteFullBeginTag ("h3");
-				writer.WriteEncodedText ("No Issues Found");
-				writer.WriteEndTag ("h3");
-				writer.WriteBreak ();
-			}
-			else {
-				OutputHtmlResults (writer, "Methods missing from Mono", missing_results, "Calling Method", "Method not yet in Mono");
-				OutputHtmlResults (writer, "P/Invokes into native code", pinvoke_results, "Calling Method", "P/Invoke Method", "External DLL");
-				OutputHtmlResults (writer, "Methods called that throw NotImplementedException", not_implemented_results, "Calling Method", "Mono method that throws NotImplementedException");
-				OutputHtmlResults (writer, "Methods called marked with [MonoTodo]", mono_todo_results, "Calling Method", "Method with [MonoTodo]", "Reason");
-			}
-		}
-
-		public void AddResultsToTextReport (StreamWriter writer)
-		{
-			OutputTextResults (writer, "[MISS]", missing_results);
-			OutputTextResults (writer, "[PINV]", pinvoke_results);
-			OutputTextResults (writer, "[NIEX]", not_implemented_results);
-			OutputTextResults (writer, "[TODO]", mono_todo_results);
-		}
-
-		private void OutputHtmlResults (XhtmlTextWriter writer, string heading, List<BaseError> results, params string[] tableHeaders)
-		{
-			if (results.Count == 0)
-				return;
-
-			writer.WriteFullBeginTag ("h3");
-			writer.WriteEncodedText (heading);
-			writer.WriteEndTag ("h3");
-
-			writer.WriteFullBeginTag ("table");
-			writer.WriteBeginTag ("tr");
-			writer.WriteAttribute ("class", "header");
-			writer.Write (HtmlTextWriter.TagRightChar);
-
-
-			if (tableHeaders != null && tableHeaders.Length > 0) {
-				foreach (string s in tableHeaders) {
-					writer.WriteFullBeginTag ("td");
-					writer.WriteEncodedText (s);
-					writer.WriteEndTag ("td");
-				}
-			}
-
-			writer.WriteEndTag ("tr");
-
-			bool odd = false;
-			string previous_class = string.Empty;
-
-			foreach (BaseError be in results) {
-				if (previous_class != be.GetCaller ().Class) {
-					writer.WriteBeginTag ("tr");
-					writer.WriteAttribute ("class", "class");
-					writer.Write (HtmlTextWriter.TagRightChar);
-
-					writer.WriteBeginTag ("td");
-					writer.WriteAttribute ("colspan", "3");
-					writer.Write (HtmlTextWriter.TagRightChar);
-
-					writer.WriteEncodedText ("Class " + be.GetCaller ().Class + ":");
-					writer.WriteEndTag ("td");
-					writer.WriteEndTag ("tr");
-
-
-				}
-				be.WriteHtml (writer, odd);
-				odd = !odd;
-				previous_class = be.GetCaller ().Class;
-			}
-
-			writer.WriteEndTag ("table");
-			writer.WriteBreak ();
-			writer.WriteBreak ();
-		}
-
-		private void OutputTextResults (StreamWriter writer, string heading, List<BaseError> results)
-		{
-			if (results.Count == 0)
-				return;
-
-			foreach (BaseError be in results) {
-				writer.Write ("{0} ", heading);
-				be.WriteText (writer);
-			}
-		}
-
-		public void FinishHtmlReport (XhtmlTextWriter writer)
-		{
-			writer.WriteEndTag ("body");
-			writer.WriteEndTag ("html");
-			writer.Close ();
-		}
-
-		public void FinishTextReport (StreamWriter writer)
-		{
-			writer.Close ();
-		}
-
-		public void ClearPInvokeDefinitions ()
-		{
-			pinvoke_results = new List<BaseError> ();
-		}
-
-		private void WriteCss (XhtmlTextWriter writer)
-		{
-			writer.WriteFullBeginTag ("style");
-
-			writer.WriteLine ("body { background-color: #fff; color: #333; font-family: lucida grande, sans-serif; margin: 5; padding: 0; font-size: 9pt; }");
-			writer.WriteLine ("table { font-size: 9pt; width: 100%; padding: 0; margin: 0; font-family: Verdana, Tahoma, Lucida Sans, Sans-Serif; border-collapse: collapse; }");
-			writer.WriteLine ("table tr.header { font-weight: bold; font-size: 12px; padding: 5px; background-color: #e8f3d4; border: none; }");
-			writer.WriteLine ("table tr.header td { padding: 5px; border: 1px; }");
-			writer.WriteLine ("tr.odd { background-color: #F1F5FA; }");
-			writer.WriteLine ("tr.class { 	font-weight: bold; }");
-			writer.WriteLine ("h1,h2,h3,h4,h5,h6 { color: #68892f; font-family: vag rounded, vag round, arial mt rounded, arial rounded, lucida grande, myriad, andale sans, luxi sans, bitstream vera sans, tahoma, toga sans, helvetica, arial, sans-serif; margin: 0; padding: 0; }");
-			writer.WriteLine ("h1 { font-size: 2.25em; }");
-			writer.WriteLine ("h2 { margin-bottom: .5em; font-size: 1.75em; }");
-			writer.WriteLine ("h3 { margin-bottom: .45em; font-size: 1.25em; }");
-
-			writer.WriteEndTag ("style");
-		}
-		
-		public static bool IsValidAssembly (string assembly)
-		{
-			try {
-				AssemblyFactory.GetAssembly (assembly);
-				return true;
-			}
-			catch (Exception) {
-				return false;
-			}
-		}
-		
-		// results and version are required, the rest is optional
-		// returns true if the results were successfully submitted, false if they weren't
-		// however you must catch Exceptions for things like network failure, etc.
-		public static bool SubmitResults (string results, string version, string name, string email, string organization, string homepage, string comments)
-		{
-			if (string.IsNullOrEmpty(results) || string.IsNullOrEmpty(version))
-				throw new ArgumentException ("You must fill in results and version");
+				r = new HtmlReport (this.html_report_path);
 				
-			MoMAWebService.MoMASubmit ws = new MoMAWebService.MoMASubmit ();
+				r.Definitions = definitions.Version;
+				r.Title = "MoMA Scan Results";
+				r.BeginReport ();
+			}
 
-			string extra = String.Format (
-			    "@Definitions: {0}\n" +
-			    "@Name: {1}\n" +
-			    "@Email: {2}\n" +
-			    "@Organization: {3}\n" +
-			    "@HomePage: {4}\n" +
-			    "@Comments: {5}\n{6}", version,
-			    name, email, organization, homepage,
-			    comments.Replace ('\n', ' ').Replace ('\r', ' '),
-			    results);
-		
-			return ws.SubmitResults (extra);
+			if (write_xml_report) {
+				EnsureOutputDirectory (xml_report_path);
+
+				xr = new XmlReport (this.xml_report_path);
+
+				xr.Definitions = definitions.Version;
+				xr.MomaVersion = Application.ProductVersion;
+				xr.BeginReport ();
+			}
 		}
+
+		private static void EnsureOutputDirectory (string path)
+		{
+			if (!Directory.Exists (Path.GetDirectoryName (path)))
+				Directory.CreateDirectory (Path.GetDirectoryName (path));
+		}
+		
+		private void FinishReports (ScanningCompletedEventArgs e)
+		{
+			if (write_html_report)
+				r.EndReport (e.MissingMethodTotal, e.NotImplementedExceptionTotal, e.MonoTodoTotal, e.PInvokeTotal);
+			
+			if (write_xml_report)
+				xr.EndReport ();
+		}
+
+		private void LoadDefinitions (string definitionBundlePath)
+		{
+			Stream mt;
+			Stream ni;
+			Stream mi;
+
+			DefinitionHandler.GetDefinitionStreamsFromBundle (definitionBundlePath, out mt, out ni, out mi);
+
+			mono_todo = new CheckMonoTodo (mt);
+			not_implemented = new BaseChecker (ni);
+			missing = new BaseChecker (mi);
+
+			mt.Close ();
+			ni.Close ();
+			mi.Close ();
+		}
+
+		private void ScanAssemblyForPInvokes (string assembly)
+		{
+			if (pinvoke == null)
+				pinvoke = new CheckPInvokes ();
+
+			pinvoke.FindPInvokesInAssembly (assembly);
+		}
+
+		private void SetXmlMetadataValue (XmlDocument doc, string node, string value)
+		{
+			if (string.IsNullOrEmpty (value))
+				return;
+
+			doc.DocumentElement["metadata"][node].InnerText = value;
+		}
+		#endregion
+
+		#region Events
+		public event EventHandler<AssemblyScannedEventArgs> AssemblyScanned;
+		public event EventHandler<ScanningCompletedEventArgs> ScanningCompleted;
+
+		protected void OnAssemblyScanned (AssemblyScannedEventArgs e)
+		{
+			if (AssemblyScanned != null)
+				AssemblyScanned (this, e);
+		}
+		
+		protected void OnScanningCompleted (ScanningCompletedEventArgs e)
+		{
+			if (ScanningCompleted != null)
+				ScanningCompleted (this, e);
+		}
+		#endregion
 	}
 }

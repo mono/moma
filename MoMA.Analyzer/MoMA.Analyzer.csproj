@@ -1,14 +1,20 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{CC12F142-C92F-4AD0-AEA3-D94F661C557B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MoMA.Analyzer</RootNamespace>
     <AssemblyName>MoMA.Analyzer</AssemblyName>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,15 +38,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\Program Files\Mono-1.2\lib\mono\2.0\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Cecil, Version=0.4.3.1, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+    <Reference Include="Mono.Cecil, Version=0.6.8.8607, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Cecil\gendarme\console\bin\Release\Mono.Cecil.dll</HintPath>
+      <HintPath>..\..\Mono\class\Mono.Cecil\bin\Release\Mono.Cecil.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.EnterpriseServices" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Web.Services" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -48,11 +52,15 @@
     <Compile Include="AssemblyAnalyzer.cs" />
     <Compile Include="Definitions\FileDefinition.cs" />
     <Compile Include="Definitions\DefinitionHandler.cs" />
+    <Compile Include="EventArgs\AssemblyScannedEventArgs.cs" />
+    <Compile Include="EventArgs\ScanningCompletedEventArgs.cs" />
+    <Compile Include="Reports\ResultsReport.cs" />
+    <Compile Include="Reports\XmlReport.cs" />
     <Compile Include="Results\BaseError.cs" />
     <Compile Include="Analysis\CheckMonoTodo.cs" />
     <Compile Include="Analysis\CheckPInvokes.cs" />
-    <Compile Include="MethodExtractor.cs" />
-    <Compile Include="Method.cs" />
+    <Compile Include="Methods\MethodExtractor.cs" />
+    <Compile Include="Methods\Method.cs" />
     <Compile Include="Results\MissingMethodError.cs" />
     <Compile Include="Results\MonoTodoError.cs" />
     <Compile Include="Results\NotImplementedExceptionError.cs" />

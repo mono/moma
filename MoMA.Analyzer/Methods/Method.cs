@@ -1,6 +1,29 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:c
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+// Copyright (c) 2006-2008 Jonathan Pobst (monkey@jpobst.com)
+//
+// Author:
+//	Jonathan Pobst	monkey@jpobst.com
+//
+
+using Mono.Cecil;
 
 namespace MoMA.Analyzer
 {
@@ -27,6 +50,13 @@ namespace MoMA.Analyzer
 			ParseMethod ();
 		}
 
+		public Method (string method, MethodDefinition md)
+		{
+			this.raw_method = method;
+			
+			ParseMethod (md);
+		}
+		
 		public string RawMethod
 		{
 			get { return raw_method; }
@@ -45,6 +75,14 @@ namespace MoMA.Analyzer
 			set { method_class = value; }
 		}
 
+		public string ClassOnly {
+			get { return Class.Substring (Class.LastIndexOf ('.') + 1); }
+		}
+		
+		public string Namespace {
+			get { return Class.Substring (0, Class.LastIndexOf ('.')); }
+		}
+		
 		private void ParseMethod ()
 		{
 			string return_type;
@@ -79,8 +117,28 @@ namespace MoMA.Analyzer
 			method_output = string.Format ("{0} {1}({2})", ConvertType (return_type), function_name, final_parameters);
 			method_class = raw_method.Substring (raw_method.IndexOf (" ") + 1, colons - raw_method.IndexOf (" ") - 1);
 			method_output_with_class = string.Format ("{0} {1}.{2}({3})", ConvertType (return_type), method_class.Substring (method_class.LastIndexOf (".") + 1), function_name, final_parameters);
-		
 		}
+		
+		private void ParseMethod (MethodDefinition md)
+		{
+			string return_type;
+			string function_name;
+			string final_parameters = string.Empty;
+
+			foreach (ParameterDefinition p in md.Parameters)
+				final_parameters += (ConvertType (p.ParameterType.ToString ()) + ", ");
+
+			function_name = md.Name;
+			return_type = ConvertType (md.ReturnType.ReturnType.FullName);
+			
+			if (final_parameters.Length > 0)
+				final_parameters = final_parameters.Substring (0, final_parameters.Length - 2);
+				
+			method_output = string.Format ("{0} {1}({2})", return_type, function_name, final_parameters);
+			method_class = md.DeclaringType.ToString ();
+			method_output_with_class = string.Format ("{0} {1}({2})", return_type, method_class, final_parameters);
+		}
+		
 		public override string ToString ()
 		{
 			return method_output;
