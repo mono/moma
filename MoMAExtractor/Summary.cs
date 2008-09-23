@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
-using MoMA.Analyzer;
 using System.Windows.Forms;
+using MoMA.Analyzer;
 
 namespace MoMAExtractor
 {
@@ -21,7 +20,7 @@ namespace MoMAExtractor
 		// False: Output MoMA stats for each assembly
 		private static bool count_only = false;
 		
-		static void Main (string[] args)
+		static void Main0 (string[] args)
 		{
 			string output_path = Path.GetDirectoryName (Application.ExecutablePath);
 

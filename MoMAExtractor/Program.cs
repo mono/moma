@@ -9,14 +9,14 @@ namespace MoMAExtractor
 	class Program
 	{
 		// Parameters to fiddle with
-		private static bool use_20 = true;
-		private static bool use_30 = true;
-		private static bool use_35 = true;
+		private static bool use_20 = true;	// Include the 2.0 framework
+		private static bool use_30 = true;	// Include the 3.0 framework
+		private static bool use_35 = true;	// Include the 3.5 framework
 		
-		private static bool use_design = true;
-		private static bool mwf_only = false;
+		private static bool use_design = false;	// Include *Design namespaces
+		private static bool mwf_only = false;	// Only do System.Windows.Forms (overrides others)
 		
-		static void Main0 (string[] args)
+		static void Main (string[] args)
 		{
 			string output_path = Path.GetDirectoryName (Application.ExecutablePath);
 
