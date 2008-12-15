@@ -125,7 +125,7 @@ namespace MoMAExtractor
 					assemblies.Add (Path.Combine (path35, "System.Web.Extensions.Design.dll"));
 			}
 			
-			for (int i = assemblies.Count - 1; i > 0; i--)
+			for (int i = assemblies.Count - 1; i >= 0; i--)
 				if (!File.Exists (assemblies[i]))
 					assemblies.RemoveAt (i);
 					
