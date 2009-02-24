@@ -138,7 +138,7 @@ namespace MoMA.Analyzer
 			xml.WriteAttributeString ("pinv", e.PInvokeResults.Count.ToString ());
 
 			// Write MonoTodo <issue>'s
-			foreach (MonoTodoError er in e.MonoTodoResults) {
+			foreach (MomaError er in e.MonoTodoResults) {
 				xml.WriteStartElement ("issue");
 				xml.WriteAttributeString ("type", "todo");
 				xml.WriteElementString ("class", er.GetCaller ().ClassOnly);
@@ -150,7 +150,7 @@ namespace MoMA.Analyzer
 			}
 
 			// Write NIEX <issue>'s
-			foreach (NotImplementedExceptionError er in e.NotImplementedExceptionResults) {
+			foreach (MomaError er in e.NotImplementedExceptionResults) {
 				xml.WriteStartElement ("issue");
 				xml.WriteAttributeString ("type", "niex");
 				xml.WriteElementString ("class", er.GetCaller ().ClassOnly);
@@ -161,7 +161,7 @@ namespace MoMA.Analyzer
 			}
 
 			// Write Missing <issue>'s
-			foreach (MissingMethodError er in e.MissingMethodResults) {
+			foreach (MomaError er in e.MissingMethodResults) {
 				xml.WriteStartElement ("issue");
 				xml.WriteAttributeString ("type", "miss");
 				xml.WriteElementString ("class", er.GetCaller ().ClassOnly);
@@ -172,7 +172,7 @@ namespace MoMA.Analyzer
 			}
 
 			// Write P/Invoke <issue>'s
-			foreach (PInvokeError er in e.PInvokeResults) {
+			foreach (MomaError er in e.PInvokeResults) {
 				xml.WriteStartElement ("issue");
 				xml.WriteAttributeString ("type", "pinv");
 				xml.WriteElementString ("class", er.GetCaller ().ClassOnly);

@@ -85,28 +85,28 @@ namespace MoMA.Analyzer
 			if (e.MissingMethodResults.Count > 0) {
 				WriteSubRowHeader ("Calling Method", "Method Missing from Mono", string.Empty);
 
-				foreach (BaseError b in e.MissingMethodResults)
+				foreach (MomaError b in e.MissingMethodResults)
 					WriteSubRowContent (b.GetCaller ().ToString (), b.GetCallee ().ToStringWithClass (), string.Empty);
 			}
 
 			if (e.NotImplementedExceptionResults.Count > 0) {
 				WriteSubRowHeader ("Calling Method", "Method that Throws NotImplementedException", string.Empty);
 
-				foreach (BaseError b in e.NotImplementedExceptionResults)
+				foreach (MomaError b in e.NotImplementedExceptionResults)
 					WriteSubRowContent (b.GetCaller ().ToString (), b.GetCallee ().ToStringWithClass (), string.Empty);
 			}
 
 			if (e.MonoTodoResults.Count > 0) {
 				WriteSubRowHeader ("Calling Method", "Method with [MonoTodo]", "Reason");
 
-				foreach (BaseError b in e.MonoTodoResults)
+				foreach (MomaError b in e.MonoTodoResults)
 					WriteSubRowContent (b.GetCaller ().ToString (), b.GetCallee ().ToStringWithClass (), b.GetCallee ().Data);
 			}
 
 			if (e.PInvokeResults.Count > 0) {
 				WriteSubRowHeader ("Calling Method", "P/Invoke Method", "P/Invoke Library");
 
-				foreach (BaseError b in e.PInvokeResults)
+				foreach (MomaError b in e.PInvokeResults)
 					WriteSubRowContent (b.GetCaller ().ToString (), b.GetCallee ().ToStringWithClass (), b.GetCallee ().Data);
 			}
 

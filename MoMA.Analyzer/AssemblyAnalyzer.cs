@@ -41,10 +41,10 @@ namespace MoMA.Analyzer
 		private BaseChecker missing;
 		private CheckPInvokes pinvoke;
 
-		private List<BaseError> mono_todo_results;
-		private List<BaseError> not_implemented_results;
-		private List<BaseError> missing_results;
-		private List<BaseError> pinvoke_results;
+		private List<MomaError> mono_todo_results;
+		private List<MomaError> not_implemented_results;
+		private List<MomaError> missing_results;
+		private List<MomaError> pinvoke_results;
 		
 		private int todo_total;
 		private int niex_total;
@@ -72,10 +72,10 @@ namespace MoMA.Analyzer
 		{
 			assemblies = new List<string> ();
 
-			mono_todo_results = new List<BaseError> ();
-			not_implemented_results = new List<BaseError> ();
-			missing_results = new List<BaseError> ();
-			pinvoke_results = new List<BaseError> ();
+			mono_todo_results = new List<MomaError> ();
+			not_implemented_results = new List<MomaError> ();
+			missing_results = new List<MomaError> ();
+			pinvoke_results = new List<MomaError> ();
 		}
 		#endregion
 
@@ -142,20 +142,20 @@ namespace MoMA.Analyzer
 		public Version AssemblyVersion {
 			get { return assembly_version; }
 		}
-		
-		public List<BaseError> MonoTodoResults {
+
+		public List<MomaError> MonoTodoResults {
 			get { return this.mono_todo_results; }
 		}
 
-		public List<BaseError> NotImplementedExceptionResults {
+		public List<MomaError> NotImplementedExceptionResults {
 			get { return this.not_implemented_results; }
 		}
 
-		public List<BaseError> MissingMethodResults {
+		public List<MomaError> MissingMethodResults {
 			get { return this.missing_results; }
 		}
 
-		public List<BaseError> PInvokeResults {
+		public List<MomaError> PInvokeResults {
 			get { return this.pinvoke_results; }
 		}
 
@@ -270,16 +270,16 @@ namespace MoMA.Analyzer
 									Method match;
 
 									if (mono_todo != null && mono_todo.Matches (i.Operand.ToString (), out match))
-										mono_todo_results.Add (new MonoTodoError (new Method (method.ToString ()), match));
+										mono_todo_results.Add (new MomaError (new Method (method.ToString ()), match));
 
 									if (not_implemented != null && not_implemented.Matches (i.Operand.ToString (), out match))
-										not_implemented_results.Add (new NotImplementedExceptionError (new Method (method.ToString ()), match));
+										not_implemented_results.Add (new MomaError (new Method (method.ToString ()), match));
 
 									if (pinvoke.Matches (i.Operand.ToString (), out match))
-										pinvoke_results.Add (new PInvokeError (new Method (method.ToString (), method), match));
+										pinvoke_results.Add (new MomaError (new Method (method.ToString (), method), match));
 
 									if (missing.Matches (i.Operand.ToString (), out match))
-										missing_results.Add (new MissingMethodError (new Method (method.ToString ()), match));
+										missing_results.Add (new MomaError (new Method (method.ToString ()), match));
 								}
 							}
 						}
@@ -293,16 +293,16 @@ namespace MoMA.Analyzer
 									Method match;
 
 									if (mono_todo != null && mono_todo.Matches (i.Operand.ToString (), out match))
-										mono_todo_results.Add (new MonoTodoError (new Method (method.ToString ()), match));
+										mono_todo_results.Add (new MomaError (new Method (method.ToString ()), match));
 
 									if (not_implemented != null && not_implemented.Matches (i.Operand.ToString (), out match))
-										not_implemented_results.Add (new NotImplementedExceptionError (new Method (method.ToString ()), match));
+										not_implemented_results.Add (new MomaError (new Method (method.ToString ()), match));
 
 									if (pinvoke.Matches (i.Operand.ToString (), out match))
-										pinvoke_results.Add (new PInvokeError (new Method (method.ToString ()), match));
+										pinvoke_results.Add (new MomaError (new Method (method.ToString ()), match));
 
 									if (missing.Matches (i.Operand.ToString (), out match))
-										missing_results.Add (new MissingMethodError (new Method (method.ToString ()), match));
+										missing_results.Add (new MomaError (new Method (method.ToString ()), match));
 								}
 							}
 						}

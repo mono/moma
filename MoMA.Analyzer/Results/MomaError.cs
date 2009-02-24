@@ -25,11 +25,32 @@
 
 namespace MoMA.Analyzer
 {
-	public abstract class BaseError
+	public class MomaError
 	{
-		protected Method caller;
-		protected Method callee;
+		private Method caller;
+		private Method callee;
 
+		private string document;
+		private int start_row;
+		private int start_col;
+		private int end_row;
+		private int end_col;
+
+		public MomaError (Method caller, Method callee)
+		{
+			this.caller = caller;
+			this.callee = callee;
+		}
+
+		public MomaError (Method caller, Method callee, string document, int startRow, int endRow, int startColumn, int endColumn) : this (caller, callee)
+		{
+			this.document = document;
+			this.start_row = startRow;
+			this.start_col = startColumn;
+			this.end_row = endRow;
+			this.end_col = endColumn;
+		}
+		
 		public virtual Method GetCaller ()
 		{
 			return caller;

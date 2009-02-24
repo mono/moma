@@ -35,12 +35,12 @@ namespace MoMA.Analyzer
 		private string assembly_name;
 		private string assembly_runtime;
 		private Version assembly_version;
-		private List<BaseError> mono_todo_results;
-		private List<BaseError> not_implemented_results;
-		private List<BaseError> missing_results;
-		private List<BaseError> pinvoke_results;
+		private List<MomaError> mono_todo_results;
+		private List<MomaError> not_implemented_results;
+		private List<MomaError> missing_results;
+		private List<MomaError> pinvoke_results;
 
-		public AssemblyScannedEventArgs (string path, string runtime, Version version, List<BaseError> todo, List<BaseError> niex, List<BaseError> miss, List<BaseError> pinv)
+		public AssemblyScannedEventArgs (string path, string runtime, Version version, List<MomaError> todo, List<MomaError> niex, List<MomaError> miss, List<MomaError> pinv)
 		{
 			assembly_path = path;
 			assembly_name = Path.GetFileName (path);
@@ -65,19 +65,19 @@ namespace MoMA.Analyzer
 			get { return assembly_version; }
 		}
 
-		public List<BaseError> MonoTodoResults {
+		public List<MomaError> MonoTodoResults {
 			get { return this.mono_todo_results; }
 		}
 
-		public List<BaseError> NotImplementedExceptionResults {
+		public List<MomaError> NotImplementedExceptionResults {
 			get { return this.not_implemented_results; }
 		}
 
-		public List<BaseError> MissingMethodResults {
+		public List<MomaError> MissingMethodResults {
 			get { return this.missing_results; }
 		}
 
-		public List<BaseError> PInvokeResults {
+		public List<MomaError> PInvokeResults {
 			get { return this.pinvoke_results; }
 		}
 		
