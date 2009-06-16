@@ -7,9 +7,9 @@ namespace MoMAExtractor
 {
 	static class AssemblyManager
 	{
-		private static string mono_20 = @"C:\Program Files (x86)\Mono-1.9.1\lib\mono\2.0";
-		private static string mono_30 = @"C:\Program Files (x86)\Mono-1.9.1\lib\mono\3.0";
-		private static string mono_35 = @"C:\Program Files (x86)\Mono-1.9.1\lib\mono\3.5";
+		private static string mono_20 = @"C:\Program Files (x86)\Mono-2.4\lib\mono\2.0";
+		private static string mono_30 = @"C:\Program Files (x86)\Mono-2.4\lib\mono\3.0";
+		private static string mono_35 = @"C:\Program Files (x86)\Mono-2.4\lib\mono\3.5";
 
 		private static string net_20 = @"C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727";
 		private static string net_30 = @"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\v3.0";
@@ -126,8 +126,10 @@ namespace MoMAExtractor
 			}
 			
 			for (int i = assemblies.Count - 1; i >= 0; i--)
-				if (!File.Exists (assemblies[i]))
+				if (!File.Exists (assemblies[i])) {
+					Console.WriteLine (string.Format ("{0} doesn't have: {1}", is_mono ? "Mono" : "MS", Path.GetFileName (assemblies[i])));
 					assemblies.RemoveAt (i);
+				}
 					
 			return assemblies;
 		}
