@@ -481,7 +481,7 @@ namespace MoMA
 
 		private void DownloadMonoDevelopButton_Click (object sender, EventArgs e)
 		{
-			System.Diagnostics.Process.Start ("http://www.monodevelop.com/Main_Page");
+			System.Diagnostics.Process.Start ("http://www.monodevelop.com/");
 		}
 
 		private void GettingStartedButton_Click (object sender, EventArgs e)
