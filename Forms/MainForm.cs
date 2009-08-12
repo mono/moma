@@ -97,6 +97,11 @@ namespace MoMA
 
 		public void AnalyzeNoGui ()
 		{
+			string msg = VerifyValidAssemblies ();
+			
+			if (!string.IsNullOrEmpty (msg))
+				Console.WriteLine (msg);
+				
 			async_definitions = (FileDefinition)MonoVersionCombo.SelectedItem;
 			async_assemblies = (ListViewItem[])new ArrayList (AssemblyListView.Items).ToArray (typeof (ListViewItem));
 
@@ -156,7 +161,11 @@ namespace MoMA
 					SetupForm (WizardStep.ChooseAssemblies);
 					break;
 				case WizardStep.ChooseAssemblies:
-					VerifyValidAssemblies ();
+					string msg = VerifyValidAssemblies ();
+					
+					if (!string.IsNullOrEmpty (msg))
+						MessageBox.Show (msg);
+					
 					if (AssemblyListView.Items.Count == 0) {
 						MessageBox.Show ("Please choose at least one assembly to analyze.");
 						return;
@@ -377,7 +386,7 @@ namespace MoMA
 			}
 		}
 
-		private void VerifyValidAssemblies ()
+		private string VerifyValidAssemblies ()
 		{
 			List<ListViewItem> invalid_assemblies = new List<ListViewItem> ();
 
@@ -392,8 +401,7 @@ namespace MoMA
 				AssemblyListView.Items.Remove (lvi);
 			}
 
-			if (invalid_assemblies.Count > 0)
-				MessageBox.Show (msg);
+			return msg;
 		}
 
 		private void SetupMonoVersion ()
