@@ -400,7 +400,10 @@ namespace MoMA
 				msg += string.Format ("{0}\n", lvi.Text);
 				AssemblyListView.Items.Remove (lvi);
 			}
-
+			
+			if (invalid_assemblies.Count == 0)
+				return string.Empty;
+				
 			return msg;
 		}
 
