@@ -25,8 +25,8 @@ namespace MoMAExtractor
 			string output_path = Path.GetDirectoryName (Application.ExecutablePath);
 
 			// Get the assemblies we want to examine
-			List<string> mono_assemblies = AssemblyManager.GetAssemblies (true, use_20, use_30, use_35, use_design, mwf_only);
-			List<string> ms_assemblies = AssemblyManager.GetAssemblies (false, use_20, use_30, use_35, use_design, mwf_only);
+			List<string> mono_assemblies = AssemblyManager.GetAssemblies (true, use_20, use_30, use_35, false, false, use_design, mwf_only);
+			List<string> ms_assemblies = AssemblyManager.GetAssemblies (false, use_20, use_30, use_35, false, false, use_design, mwf_only);
 
 			StreamWriter sw = new StreamWriter (Path.Combine (output_path, "summary.txt"));
 			

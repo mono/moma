@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EFB1C06D-B954-441C-8720-F4AA9E4C33F6}"
 	ProjectSection(SolutionItems) = preProject
 		MoMASubmitWebService\MoMASubmit.asmx = MoMASubmitWebService\MoMASubmit.asmx

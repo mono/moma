@@ -215,7 +215,7 @@ namespace MoMA.Analyzer
 		public static bool IsValidAssembly (string assembly)
 		{
 			try {
-				AssemblyFactory.GetAssembly (assembly);
+				AssemblyDefinition.ReadAssembly (assembly);
 				return true;
 			} catch {
 				return false;
@@ -254,7 +254,7 @@ namespace MoMA.Analyzer
 		
 		private void AnalyzeAssembly (string assembly)
 		{
-			AssemblyDefinition ad = AssemblyFactory.GetAssembly (assembly);
+			AssemblyDefinition ad = AssemblyDefinition.ReadAssembly (assembly);
 
 			assembly_version = ad.Name.Version;
 			AssemblyRuntime = ad.Runtime.ToString ();

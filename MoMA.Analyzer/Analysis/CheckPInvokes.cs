@@ -37,7 +37,7 @@ namespace MoMA.Analyzer
 		
 		public void FindPInvokesInAssembly (string assembly)
 		{
-			AssemblyDefinition ad = AssemblyFactory.GetAssembly (assembly);
+			AssemblyDefinition ad = AssemblyDefinition.ReadAssembly (assembly);
 
 			//Gets all types of the MainModule of the assembly
 			foreach (TypeDefinition type in ad.MainModule.Types) {
