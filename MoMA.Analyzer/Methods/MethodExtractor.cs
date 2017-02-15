@@ -23,7 +23,10 @@
 //	Jonathan Pobst	monkey@jpobst.com
 //
 
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -51,9 +54,9 @@ namespace MoMA.Analyzer
 							foreach (CustomAttribute ca in property.CustomAttributes) {
 								if (IsReportableMonoTODO (ca.Constructor.DeclaringType.ToString ())) {
 									if (property.GetMethod != null && IsMethodVisible (property.GetMethod))
-										monoTodoMethods[property.GetMethod.ToString ()] = new Method (property.GetMethod.ToString (), ca.ConstructorParameters.Count > 0 ? ca.ConstructorParameters[0].ToString ().Replace ('\n', ' ') : string.Empty);
+										monoTodoMethods[property.GetMethod.ToString ()] = new Method (property.GetMethod.ToString (), ca.Constructor.Parameters.Count > 0 ? ca.Constructor.Parameters[0].ToString ().Replace ('\n', ' ') : string.Empty);
 									if (property.SetMethod != null && IsMethodVisible (property.SetMethod))
-										monoTodoMethods[property.SetMethod.ToString ()] = new Method (property.SetMethod.ToString (), ca.ConstructorParameters.Count > 0 ? ca.ConstructorParameters[0].ToString ().Replace ('\n', ' ') : string.Empty);
+										monoTodoMethods[property.SetMethod.ToString ()] = new Method (property.SetMethod.ToString (), ca.Constructor.Parameters.Count > 0 ? ca.Constructor.Parameters[0].ToString ().Replace ('\n', ' ') : string.Empty);
 								}
 							}
 						}
@@ -72,7 +75,7 @@ namespace MoMA.Analyzer
 						if (monoTodoMethods != null)
 							foreach (CustomAttribute ca in method.CustomAttributes)
 								if (IsReportableMonoTODO (ca.Constructor.DeclaringType.ToString ()))
-									monoTodoMethods[method.ToString ()] = new Method (method.ToString (), ca.ConstructorParameters.Count > 0 ? ca.ConstructorParameters[0].ToString ().Replace ('\n', ' ') : string.Empty);
+									monoTodoMethods[method.ToString ()] = new Method (method.ToString (), ca.Constructor.Parameters.Count > 0 ? ca.Constructor.Parameters[0].ToString ().Replace ('\n', ' ') : string.Empty);
 
 						// If adding methods that throw NotImplementedException, look for those
 						if (throwsNotImplementedMethods != null && ThrowsNotImplementedException (method))
@@ -80,7 +83,7 @@ namespace MoMA.Analyzer
 					}
 
 					//Gets all constructors of the current type
-					foreach (MethodDefinition method in type.Constructors) {
+					foreach (MethodDefinition method in type.Methods.Where(m => m.IsConstructor)) {
 						// We only want Public and Protected methods
 						if (!IsMethodVisible (method))
 							continue;
@@ -93,7 +96,7 @@ namespace MoMA.Analyzer
 						if (monoTodoMethods != null)
 							foreach (CustomAttribute ca in method.CustomAttributes)
 								if (IsReportableMonoTODO (ca.Constructor.DeclaringType.ToString ()))
-									monoTodoMethods[method.ToString ()] = new Method (method.ToString (), ca.ConstructorParameters.Count > 0 ? ca.ConstructorParameters[0].ToString ().Replace ('\n', ' ') : string.Empty);
+									monoTodoMethods[method.ToString ()] = new Method (method.ToString (), ca.Constructor.Parameters.Count > 0 ? ca.Constructor.Parameters[0].ToString ().Replace ('\n', ' ') : string.Empty);
 
 						// If adding methods that throw NotImplementedException, look for those
 						if (throwsNotImplementedMethods != null && ThrowsNotImplementedException (method))
@@ -132,10 +135,34 @@ namespace MoMA.Analyzer
 				
 			return true;
 		}
-		
+
+		public class TypeDefinitionCache: KeyedCollection<string, TypeDefinition> {
+			protected override string GetKeyForItem(TypeDefinition item) => item.FullName;
+
+			public void Add(AssemblyDefinition a) {
+				var defs = a.Modules.SelectMany(m => m.Types);
+				foreach (var def in defs) Add(def);
+			}
+
+			public TypeDefinition Find(TypeReference reference) {
+				TypeDefinition def = null;
+				if (Dictionary != null) {
+					if (!Dictionary.TryGetValue(reference.FullName, out def)) Add(reference.Module.Assembly);
+					if (!Dictionary.TryGetValue(reference.FullName, out def)) throw new NotSupportedException();
+				} else {
+					if (!Contains(reference.FullName)) Add(reference.Module.Assembly);
+					if (!Contains(reference.FullName)) throw new NotSupportedException();
+					def = this[reference.FullName];
+				}
+				return def;
+			}
+		}
+
+		static TypeDefinitionCache Cache = new TypeDefinitionCache();
 		private static TypeDefinition TypeReferenceToDefinition (TypeReference type)
 		{
-			return type.Module.Types[type.FullName];
+			if (type.Module.Types.Count < 10) return type.Module.Types.FirstOrDefault(def => def.FullName == type.FullName);
+			else return Cache.Find(type);
 		}
 		
 		// Is this attribute a MonoTODO that we want to report in MoMA?

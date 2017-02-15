@@ -28,6 +28,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
+using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -257,7 +258,7 @@ namespace MoMA.Analyzer
 			AssemblyDefinition ad = AssemblyDefinition.ReadAssembly (assembly);
 
 			assembly_version = ad.Name.Version;
-			AssemblyRuntime = ad.Runtime.ToString ();
+			AssemblyRuntime = ad.Modules.FirstOrDefault()?.Runtime.ToString () ?? "";
 			assembly_name = Path.GetFileName (assembly);
 
 			foreach (TypeDefinition type in ad.MainModule.Types) {
@@ -286,7 +287,7 @@ namespace MoMA.Analyzer
 					}
 
 					// Check every constructor for calls that match our issues lists
-					foreach (MethodDefinition method in type.Constructors) {
+					foreach (MethodDefinition method in type.Methods.Where(m => m.IsConstructor)) {
 						if (method.Body != null) {
 							foreach (Instruction i in method.Body.Instructions) {
 								if (i.OpCode == OpCodes.Call || i.OpCode == OpCodes.Callvirt || i.OpCode == OpCodes.Calli || i.OpCode == OpCodes.Ldftn || i.OpCode == OpCodes.Ldvirtftn || i.OpCode == OpCodes.Newobj || i.OpCode == OpCodes.Initobj) {
