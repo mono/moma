@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoMA.Analyzer", "MoMA.Analy
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoMAExtractor", "MoMAExtractor\MoMAExtractor.csproj", "{64DE84A1-C274-4875-84F2-FCA7B24104D8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoMA.Analyzer.Tests", "MoMA.Analyzer.Tests\MoMA.Analyzer.Tests.csproj", "{F9FA4AAB-F02B-4180-A436-45FF4A657AD9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{64DE84A1-C274-4875-84F2-FCA7B24104D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{64DE84A1-C274-4875-84F2-FCA7B24104D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{64DE84A1-C274-4875-84F2-FCA7B24104D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9FA4AAB-F02B-4180-A436-45FF4A657AD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9FA4AAB-F02B-4180-A436-45FF4A657AD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9FA4AAB-F02B-4180-A436-45FF4A657AD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9FA4AAB-F02B-4180-A436-45FF4A657AD9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

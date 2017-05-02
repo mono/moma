@@ -173,6 +173,14 @@ namespace MoMA.Analyzer
 				case "System.Byte":
 					return "byte";
 			}
+            if (type.Contains("<"))
+            {
+                return string.Format("{0}<{1}", ConvertType(type.Substring(0, type.IndexOf("<"))), ConvertType(type.Substring(type.IndexOf("<") + 1)));
+            }
+            if (type.EndsWith(">"))
+            {
+                return string.Format("{0}>", ConvertType(type.Substring(0, type.IndexOf(">"))));
+            }
 			
 			return type.Substring (type.LastIndexOf (".") + 1);
 		}
