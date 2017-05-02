@@ -25,6 +25,7 @@
 
 using System;
 using System.IO;
+using System.Web;
 
 namespace MoMA.Analyzer
 {
@@ -86,28 +87,28 @@ namespace MoMA.Analyzer
 				WriteSubRowHeader ("Calling Method", "Method Missing from Mono", string.Empty);
 
 				foreach (MomaError b in e.MissingMethodResults)
-					WriteSubRowContent (b.GetCaller ().ToString (), b.GetCallee ().ToStringWithClass (), string.Empty);
+					WriteSubRowContent(HttpUtility.HtmlEncode(b.GetCaller ().ToString ()), HttpUtility.HtmlEncode(b.GetCallee().ToStringWithClass()), string.Empty);
 			}
 
 			if (e.NotImplementedExceptionResults.Count > 0) {
 				WriteSubRowHeader ("Calling Method", "Method that Throws NotImplementedException", string.Empty);
 
 				foreach (MomaError b in e.NotImplementedExceptionResults)
-					WriteSubRowContent (b.GetCaller ().ToString (), b.GetCallee ().ToStringWithClass (), string.Empty);
+					WriteSubRowContent (HttpUtility.HtmlEncode(b.GetCaller().ToString()), HttpUtility.HtmlEncode(b.GetCallee().ToStringWithClass()), string.Empty);
 			}
 
 			if (e.MonoTodoResults.Count > 0) {
 				WriteSubRowHeader ("Calling Method", "Method with [MonoTodo]", "Reason");
 
 				foreach (MomaError b in e.MonoTodoResults)
-					WriteSubRowContent (b.GetCaller ().ToString (), b.GetCallee ().ToStringWithClass (), b.GetCallee ().Data);
+					WriteSubRowContent (HttpUtility.HtmlEncode(b.GetCaller().ToString()), HttpUtility.HtmlEncode(b.GetCallee ().ToStringWithClass ()), b.GetCallee ().Data);
 			}
 
 			if (e.PInvokeResults.Count > 0) {
 				WriteSubRowHeader ("Calling Method", "P/Invoke Method", "P/Invoke Library");
 
 				foreach (MomaError b in e.PInvokeResults)
-					WriteSubRowContent (b.GetCaller ().ToString (), b.GetCallee ().ToStringWithClass (), b.GetCallee ().Data);
+					WriteSubRowContent (HttpUtility.HtmlEncode(b.GetCaller().ToString()), HttpUtility.HtmlEncode(b.GetCallee().ToStringWithClass()), b.GetCallee ().Data);
 			}
 
 			if (e.TotalIssues > 0)
