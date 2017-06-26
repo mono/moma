@@ -4,5 +4,3 @@ MoMAExtractor/obj/
 bin/
 obj/
 packages/
-*.suo
-*.user
