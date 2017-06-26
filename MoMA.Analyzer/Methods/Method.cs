@@ -151,48 +151,48 @@ namespace MoMA.Analyzer
 		
 		private string ConvertType (string type)
 		{
-            switch (type) {
+			switch (type) {
 				case "System.Void":
 					return "void";
 				case "System.Boolean":
 					return "bool";
-                case "System.Int16":
-                    return "short";
-                case "System.Int32":
+				case "System.Int16":
+					return "short";
+				case "System.Int32":
 					return "int";
-                case "System.Int64":
-                    return "long";
-                case "System.String":
+				case "System.Int64":
+					return "long";
+				case "System.String":
 					return "string";
 				case "System.Double":
 					return "double";
 				case "System.Decimal":
 					return "decimal";
-                case "System.Single":
-                    return "float";
-                case "System.Char":
+				case "System.Single":
+					return "float";
+				case "System.Char":
 					return "char";
 				case "System.UInt32":
 					return "uint";
-                case "System.UInt64":
-                    return "ulong";
-                case "System.Void*":
+				case "System.UInt64":
+					return "ulong";
+				case "System.Void*":
 					return "void*";
 				case "System.Byte":
 					return "byte";
-                case "System.SByte":
-                    return "sbyte";
-                case "System.Object":
-                    return "object";
+				case "System.SByte":
+					return "sbyte";
+				case "System.Object":
+					return "object";
 			}
-            if (type.Contains("<"))
-            {
-                return string.Format("{0}<{1}", ConvertType(type.Substring(0, type.IndexOf("<"))), ConvertType(type.Substring(type.IndexOf("<") + 1)));
-            }
-            if (type.EndsWith(">"))
-            {
-                return string.Format("{0}>", ConvertType(type.Substring(0, type.IndexOf(">"))));
-            }
+			if (type.Contains("<"))
+			{
+				return string.Format("{0}<{1}", ConvertType(type.Substring(0, type.IndexOf("<"))), ConvertType(type.Substring(type.IndexOf("<") + 1)));
+			}
+			if (type.EndsWith(">"))
+			{
+				return string.Format("{0}>", ConvertType(type.Substring(0, type.IndexOf(">"))));
+			}
 			
 			return type.Substring (type.LastIndexOf (".") + 1);
 		}
