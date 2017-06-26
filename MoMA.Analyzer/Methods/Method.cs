@@ -129,8 +129,8 @@ namespace MoMA.Analyzer
 				final_parameters += (ConvertType (p.ParameterType.ToString ()) + ", ");
 
 			function_name = md.Name;
-			return_type = ConvertType (md.ReturnType.FullName);
-			
+			return_type = ConvertType(md.MethodReturnType.ReturnType.FullName);
+
 			if (final_parameters.Length > 0)
 				final_parameters = final_parameters.Substring (0, final_parameters.Length - 2);
 				

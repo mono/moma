@@ -258,7 +258,7 @@ namespace MoMA.Analyzer
 			AssemblyDefinition ad = AssemblyDefinition.ReadAssembly (assembly);
 
 			assembly_version = ad.Name.Version;
-			AssemblyRuntime = ad.Modules.FirstOrDefault()?.Runtime.ToString () ?? "";
+			AssemblyRuntime = ad.MainModule.Runtime.ToString () ?? "";
 			assembly_name = Path.GetFileName (assembly);
 
 			foreach (TypeDefinition type in ad.MainModule.Types) {

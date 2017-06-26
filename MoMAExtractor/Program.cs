@@ -12,7 +12,8 @@ namespace MoMAExtractor
 		private static bool use_20 = false;	// Include the 2.0 framework
 		private static bool use_30 = false;	// Include the 3.0 framework
 		private static bool use_35 = false;	// Include the 3.5 framework
-		private static bool use_40 = true;	// Include the 4.0 framework
+		private static bool use_40 = false;  // Include the 4.0 framework
+		private static bool use_45 = true;  // Include the 4.0 framework
 		private static bool use_mobile = false;
 		
 		private static bool use_design = false;	// Include *Design namespaces
@@ -23,8 +24,8 @@ namespace MoMAExtractor
 			string output_path = Path.GetDirectoryName (Application.ExecutablePath);
 
 			// Get the assemblies we want to examine
-			List<string> mono_assemblies = AssemblyManager.GetAssemblies (true, use_20, use_30, use_35, use_40, use_mobile, use_design, mwf_only);
-			List<string> ms_assemblies = AssemblyManager.GetAssemblies (false, use_20, use_30, use_35, use_40, use_mobile, use_design, mwf_only);
+			List<string> mono_assemblies = AssemblyManager.GetAssemblies (true, use_20, use_30, use_35, use_40, use_45, use_mobile, use_design, mwf_only);
+			List<string> ms_assemblies = AssemblyManager.GetAssemblies (false, use_20, use_30, use_35, use_40, use_45, use_mobile, use_design, mwf_only);
 
 			// Extract all methods from the MS assemblies
 			SortedList<string, Method> ms_all = new SortedList<string, Method> ();

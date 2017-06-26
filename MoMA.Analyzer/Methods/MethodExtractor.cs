@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -38,8 +39,14 @@ namespace MoMA.Analyzer
 		// Leave any of the SortedList parameters null that you aren't interested in
 		public static void ExtractFromAssembly (string assembly, SortedList<string, Method> allMethods, SortedList<string, Method> throwsNotImplementedMethods, SortedList<string, Method> monoTodoMethods)
 		{
-			AssemblyDefinition ad = AssemblyDefinition.ReadAssembly (assembly);
-			
+			AssemblyDefinition ad;
+			try {
+				ad = AssemblyDefinition.ReadAssembly(assembly);
+				Console.WriteLine($"Analyzing {Path.GetFileName(assembly)}...");
+			} catch (Exception ex) {
+				Console.WriteLine($"Failed to load assembly: {assembly};\r\n{ex.Message}");
+				return;
+			}
 			//Gets all types of the MainModule of the assembly
 			foreach (TypeDefinition type in ad.MainModule.Types) {
 				if (type.Name != "<Module>") {
@@ -136,33 +143,9 @@ namespace MoMA.Analyzer
 			return true;
 		}
 
-		public class TypeDefinitionCache: KeyedCollection<string, TypeDefinition> {
-			protected override string GetKeyForItem(TypeDefinition item) => item.FullName;
-
-			public void Add(AssemblyDefinition a) {
-				var defs = a.Modules.SelectMany(m => m.Types);
-				foreach (var def in defs) Add(def);
-			}
-
-			public TypeDefinition Find(TypeReference reference) {
-				TypeDefinition def = null;
-				if (Dictionary != null) {
-					if (!Dictionary.TryGetValue(reference.FullName, out def)) Add(reference.Module.Assembly);
-					if (!Dictionary.TryGetValue(reference.FullName, out def)) throw new NotSupportedException();
-				} else {
-					if (!Contains(reference.FullName)) Add(reference.Module.Assembly);
-					if (!Contains(reference.FullName)) throw new NotSupportedException();
-					def = this[reference.FullName];
-				}
-				return def;
-			}
-		}
-
-		static TypeDefinitionCache Cache = new TypeDefinitionCache();
 		private static TypeDefinition TypeReferenceToDefinition (TypeReference type)
 		{
-			if (type.Module.Types.Count < 10) return type.Module.Types.FirstOrDefault(def => def.FullName == type.FullName);
-			else return Cache.Find(type);
+			return type.Module.GetType(type.FullName);
 		}
 		
 		// Is this attribute a MonoTODO that we want to report in MoMA?
